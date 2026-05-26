@@ -302,18 +302,61 @@ body {
 .exercise-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
 .exercise-item {
   background: #141414; border: 1px solid #1e1e1e; border-radius: 12px;
-  padding: 1rem 1.1rem; display: flex; gap: 12px; align-items: flex-start;
+  padding: 1rem 1.1rem; display: flex; gap: 12px; align-items: center;
 }
 .ex-num {
-  width: 28px; height: 28px; border-radius: 8px; background: #1e1e1e;
+  width: 26px; height: 26px; border-radius: 8px; background: #1e1e1e;
   display: flex; align-items: center; justify-content: center;
   font-size: 12px; font-weight: 500; color: #666; flex-shrink: 0;
+  align-self: flex-start; margin-top: 2px;
 }
-.ex-body { flex: 1; }
+/* SVG illustration in session view */
+.ex-art {
+  width: 56px; height: 56px; flex-shrink: 0;
+  background: #1a1a1a; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: #888; padding: 6px;
+}
+.ex-art svg { width: 100%; height: 100%; }
+.ex-body { flex: 1; min-width: 0; }
 .ex-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
 .ex-detail { font-size: 12px; color: #666; margin-bottom: 4px; }
-.ex-note { font-size: 11px; color: #4a9a4a; }
+.ex-note { font-size: 11px; color: #c9a84c; }
 .session-actions { display: flex; flex-direction: column; gap: 8px; }
+
+/* ─── Chat exercise cards (rendered when AI gives a workout list) ─── */
+.ex-card-list {
+  display: flex; flex-direction: column; gap: 8px;
+  margin: 4px 0;
+}
+.ex-card {
+  background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px;
+  padding: 10px 12px; display: flex; gap: 10px; align-items: center;
+  transition: border-color 0.15s;
+}
+.ex-card:hover { border-color: #3a3a3a; }
+.ex-card-num {
+  width: 22px; height: 22px; border-radius: 6px; background: #252525;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 500; color: #666; flex-shrink: 0;
+  align-self: flex-start; margin-top: 2px;
+}
+.ex-card-art {
+  width: 48px; height: 48px; flex-shrink: 0;
+  background: #141414; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: #888; padding: 5px;
+}
+.ex-card-art svg { width: 100%; height: 100%; }
+.ex-card-body { flex: 1; min-width: 0; }
+.ex-card-title { font-size: 13px; font-weight: 500; color: #f0ede8; margin-bottom: 2px; }
+.ex-card-detail { font-size: 11px; color: #666; }
+.ex-card-note { font-size: 11px; color: #c9a84c; margin-top: 3px; }
+.msg-intro {
+  margin-bottom: 8px; border-radius: 14px 14px 4px 14px;
+  background: #1a1a1a; border: 1px solid #2a2a2a;
+  padding: 10px 14px; font-size: 14px; line-height: 1.6; color: #f0ede8;
+}
 
 /* ─── Check-in ─── */
 .feeling-row { display: flex; gap: 8px; margin-bottom: 0.5rem; flex-wrap: wrap; }
