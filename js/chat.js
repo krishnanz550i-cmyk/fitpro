@@ -2,38 +2,31 @@
 let chatHistory = [];
 let isStreaming = false;
 
-// ─── System prompt builder (uses user profile for full context) ───
+// ─── System prompt — trimmed for token efficiency ───
 function buildSystemPrompt(profile) {
-  const base = `You are FitPro, a personal trainer and wellness coach. You are warm, knowledgeable, and safety-first.
+  const conds = profile?.health_notes?.trim();
+  // Only include condition-specific rules if the user actually has conditions
+  const safetyBlock = conds ? `
+SAFETY (always follow):
+- Adapt all exercises for: ${conds}
+- Spinal/nerve: no heavy loading, no unsupported folds, stop if tingling ↑
+- ACL/knee: no flexion >90°, no jumping/pivoting
+- Back pain: thoracic mobility, chest openers, postural work
+- Stop cues: sharp pain, neurological symptoms → stop immediately
+- Never diagnose; refer to physio/doctor for medical questions.` : `
+SAFETY: Always include stop-if-pain reminders. Never diagnose.`;
 
-USER PROFILE:
-- Name: ${profile?.name || 'User'}
-- Goal: ${profile?.goal || 'general fitness'}
-- Default workout time: ${profile?.default_time || 'morning'}
-- Session length: ${profile?.duration || '20'} minutes
-- Health conditions: ${profile?.health_notes || 'None provided'}
+  return `You are FitPro, a concise personal trainer. Warm, safety-first, no jargon.
+Profile: ${profile?.name || 'User'} | Goal: ${profile?.goal || 'general fitness'} | Session: ${profile?.duration || '20'} min | Time pref: ${profile?.default_time || 'morning'}
+${safetyBlock}
 
-CRITICAL SAFETY RULES (never break these):
-1. Always adapt exercises for the user's specific health conditions
-2. For spinal nerve compression: no heavy spinal loading, no deep forward folds without support, stop if tingling increases
-3. For ACL recovery: no knee flexion beyond 90°, no jumping, no pivoting, always supported standing
-4. For upper back/desk pain: prioritize thoracic mobility, chest openers, postural correction
-5. Always remind the user to stop if they feel sharp pain or neurological symptoms
-6. Never diagnose. For medical questions, recommend they consult their doctor/physio.
-
-PERSONALITY:
-- Conversational and encouraging, not robotic
-- Give specific, actionable advice tailored to their conditions
-- When suggesting exercises, always include duration/reps and safety notes
-- For scheduling, offer multiple alternatives and be flexible
-- Track and reference what they tell you in the conversation
-- When they report pain or progress, acknowledge it and adjust suggestions accordingly
-
-FORMATTING:
-- Use clear structure for exercise lists (numbered, with reps and duration)
-- Keep responses concise — detailed but not overwhelming
-- Use natural language, not clinical jargon`;
-  return base;
+RESPONSE FORMAT:
+- For exercise lists: use numbered format exactly like this:
+  1. Exercise Name
+     Sets/reps/duration · position
+     ⚠ safety note (only if needed)
+- For chat/questions: short prose, max 3 paragraphs
+- Never use markdown headers (#). Keep it tight.`;
 }
 
 // ─── Main Claude API call via Supabase Edge Function ───
@@ -52,32 +45,40 @@ async function callClaude(messages, systemOverride = null) {
   return data.content?.[0]?.text || data.text || '';
 }
 
+// ─── Detect if a response contains an exercise list ───
+function isExerciseResponse(text) {
+  // Must have at least 2 numbered items that look like exercises
+  const matches = text.match(/^\d+[.)]\s+\S/mg);
+  return matches && matches.length >= 2;
+}
+
 // ─── Send a message ───
 async function sendMessage(text, fromUser = true) {
   if (isStreaming) return;
   if (!text.trim()) return;
 
-  // Add to UI
   if (fromUser) appendMsg('user', text);
   chatHistory.push({ role: 'user', content: text });
-
-  // Save to DB (background)
   if (currentUser) saveChatMessage(currentUser.id, 'user', text).catch(() => {});
 
-  // Show typing
   const typingId = showTyping();
   isStreaming = true;
 
   try {
-    // Build context: recent history (last 10 messages)
-    const contextHistory = chatHistory.slice(-12, -1);
+    // Token efficiency: keep last 8 messages (4 exchanges) not 12
+    const contextHistory = chatHistory.slice(-9, -1);
     const reply = await callClaude(contextHistory.concat([{ role: 'user', content: text }]));
 
     removeTyping(typingId);
-    appendMsg('assistant', reply);
-    chatHistory.push({ role: 'assistant', content: reply });
 
-    // Save to DB (background)
+    // Render as visual exercise cards if it's a workout list, otherwise plain chat
+    if (isExerciseResponse(reply)) {
+      appendExerciseMsg(reply);
+    } else {
+      appendMsg('assistant', reply);
+    }
+
+    chatHistory.push({ role: 'assistant', content: reply });
     if (currentUser) saveChatMessage(currentUser.id, 'assistant', reply).catch(() => {});
 
   } catch (e) {
@@ -114,7 +115,7 @@ function autoResize(el) {
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
-// ─── UI helpers ───
+// ─── Append a plain chat message ───
 function appendMsg(role, text) {
   const container = document.getElementById('chat-messages');
   const time = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
@@ -124,6 +125,49 @@ function appendMsg(role, text) {
     <div class="msg-bubble">${escapeHtml(text)}</div>
     <div class="msg-time">${role === 'assistant' ? 'FitPro · ' : ''}${time}</div>
   `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+// ─── Append an exercise response as visual cards ───
+function appendExerciseMsg(text) {
+  const container = document.getElementById('chat-messages');
+  const time = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+  // Split: everything before the first numbered item is intro text
+  const firstNumIdx = text.search(/^\d+[.)]\s+/m);
+  const intro = firstNumIdx > 0 ? text.slice(0, firstNumIdx).trim() : '';
+  const listText = firstNumIdx >= 0 ? text.slice(firstNumIdx) : text;
+
+  // Find trailing text after last exercise block
+  const exercises = parseExerciseResponse(listText);
+
+  const div = document.createElement('div');
+  div.className = 'msg assistant';
+
+  let html = '';
+  if (intro) {
+    html += `<div class="msg-bubble msg-intro">${escapeHtml(intro)}</div>`;
+  }
+  div.innerHTML = html;
+
+  // Render exercise cards
+  if (exercises.length > 0) {
+    const cards = renderExerciseCards(exercises);
+    if (cards) div.appendChild(cards);
+  } else {
+    // Fallback: plain bubble
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble';
+    bubble.innerHTML = escapeHtml(listText);
+    div.appendChild(bubble);
+  }
+
+  const timeEl = document.createElement('div');
+  timeEl.className = 'msg-time';
+  timeEl.textContent = `FitPro · ${time}`;
+  div.appendChild(timeEl);
+
   container.appendChild(div);
   container.scrollTop = container.scrollHeight;
 }
@@ -146,7 +190,7 @@ function removeTyping(id) {
 }
 
 function escapeHtml(str) {
-  return str
+  return (str || '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
