@@ -147,17 +147,17 @@ async function sendMessage(text, fromUser = true) {
 
 // ─── Retry last user message ───
 function retryLastMessage() {
-  // Find the last user message in history
+  if (isStreaming) return; // prevent double-click
   const lastUser = [...chatHistory].reverse().find(m => m.role === 'user');
   if (!lastUser) return;
-  // Remove the error bubble
+  // Remove the error bubble from UI
   const container = document.getElementById('chat-messages');
   const lastMsg = container.lastElementChild;
   if (lastMsg) lastMsg.remove();
-  // Remove last user entry from history to avoid duplication
-  const idx = chatHistory.lastIndexOf(lastUser);
-  chatHistory.splice(idx, 1);
-  // Resend
+  // Remove last user entry from history (sendMessage will re-add it)
+  const idx = chatHistory.map(m => m.role).lastIndexOf('user');
+  if (idx !== -1) chatHistory.splice(idx, 1);
+  // Resend — fromUser=false so no duplicate bubble in UI
   sendMessage(lastUser.content, false);
 }
 
@@ -299,3 +299,21 @@ document.querySelector('.nav-item[onclick="switchView(\'chat\')"]')?.addEventLis
     }
   }
 });
+
+// ─── Warm up Edge Function silently when chat opens ───
+function warmupEdgeFunction() {
+  fetch(CONFIG.EDGE_FUNCTION_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      system: 'ping',
+      messages: [{ role: 'user', content: 'ping' }]
+    })
+  }).catch(() => {});
+}
+
+// Also warmup when the app first loads
+window.addEventListener('fitpro-ready', warmupEdgeFunction);
+
+// Expose for use in switchView
+window.warmupEdgeFunction = warmupEdgeFunction;
