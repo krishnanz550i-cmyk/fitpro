@@ -80,10 +80,10 @@ async function callClaude(messages, systemOverride = null, attempt = 1) {
 
 // ─── Detect if a response contains an exercise list ───
 function isExerciseResponse(text) {
-  // Numbered list: "1. Exercise"
-  const numbered = text.match(/^\d+[.)]\s+\S/mg);
-  if (numbered && numbered.length >= 2) return true;
-  // Also catch ## Exercise style (Claude ignoring format rules)
+  // Single or multiple numbered exercises: "1. Exercise Name"
+  const numbered = text.match(/^\d+[.)]\s+[A-Z]/mg);
+  if (numbered && numbered.length >= 1) return true;
+  // Also catch ## Exercise style
   const headers = text.match(/^#{1,3}\s+\*{0,2}Exercise/mgi);
   if (headers && headers.length >= 1) return true;
   return false;
