@@ -1,385 +1,274 @@
-// ─── Exercise Illustration Library ───
-// Position-accurate SVG illustrations showing body position + movement direction
+// ═══════════════════════════════════════════════════════
+// FitPro Exercise Library — 100 exercises
+// Zero tokens, zero network, fully local
+// ═══════════════════════════════════════════════════════
 
+// ─── SVG Illustrations ───
 const EXERCISE_SVG = {
-
-  // ── Seated upright (breathing, shoulder rolls, side stretch, neck) ──
-  seated: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <!-- chair -->
-    <rect x="18" y="50" width="44" height="3" rx="1.5" fill="none" stroke="#444" stroke-width="1.5"/>
-    <line x1="20" y1="53" x2="20" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="60" y1="53" x2="60" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
-    <!-- person seated -->
-    <circle cx="40" cy="16" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="40" y1="23" x2="40" y2="46" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- arms resting on thighs -->
-    <line x1="40" y1="32" x2="26" y2="44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <line x1="40" y1="32" x2="54" y2="44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <!-- legs bent at 90° -->
-    <line x1="40" y1="46" x2="32" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="32" y1="50" x2="32" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="46" x2="48" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="48" y1="50" x2="48" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-  </svg>`,
-
-  // ── Neck rolls — seated, head tilted with arc ──
-  'neck-rolls': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <rect x="18" y="50" width="44" height="3" rx="1.5" fill="none" stroke="#444" stroke-width="1.5"/>
-    <line x1="20" y1="53" x2="20" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="60" y1="53" x2="60" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
-    <!-- body -->
-    <line x1="40" y1="27" x2="40" y2="46" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="34" x2="26" y2="44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <line x1="40" y1="34" x2="54" y2="44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <line x1="40" y1="46" x2="32" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="32" y1="50" x2="32" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="46" x2="48" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="48" y1="50" x2="48" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- head tilted right -->
-    <circle cx="44" cy="18" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="40" y1="23" x2="40" y2="27" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- rotation arc -->
-    <path d="M28 12 Q40 4 52 12" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-    <path d="M52 12 Q56 16 52 20" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-  </svg>`,
-
-  // ── Shoulder rolls — seated, shoulder arc shown ──
-  'shoulder-rolls': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <rect x="18" y="50" width="44" height="3" rx="1.5" fill="none" stroke="#444" stroke-width="1.5"/>
-    <line x1="20" y1="53" x2="20" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="60" y1="53" x2="60" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
-    <circle cx="40" cy="16" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="40" y1="23" x2="40" y2="46" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="46" x2="32" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="32" y1="50" x2="32" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="46" x2="48" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="48" y1="50" x2="48" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- arms raised slightly with circular arrow -->
-    <line x1="40" y1="32" x2="22" y2="28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="32" x2="58" y2="28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- circular motion arrows at shoulders -->
-    <path d="M16 24 Q12 32 18 38" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-    <path d="M18 38 Q22 40 24 36" fill="none" stroke="#4a9a4a" stroke-width="1.5"/>
-    <path d="M64 24 Q68 32 62 38" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-    <path d="M62 38 Q58 40 56 36" fill="none" stroke="#4a9a4a" stroke-width="1.5"/>
-  </svg>`,
-
-  // ── Seated side stretch — arm overhead, torso leaning ──
-  'side-stretch': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <rect x="18" y="50" width="44" height="3" rx="1.5" fill="none" stroke="#444" stroke-width="1.5"/>
-    <line x1="20" y1="53" x2="20" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="60" y1="53" x2="60" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
-    <!-- tilted torso -->
-    <circle cx="40" cy="14" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="40" y1="21" x2="38" y2="46" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- right arm up and over -->
-    <line x1="38" y1="32" x2="56" y2="24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="56" y1="24" x2="62" y2="10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- left arm on chair -->
-    <line x1="38" y1="32" x2="24" y2="46" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <!-- legs -->
-    <line x1="38" y1="46" x2="30" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="30" y1="50" x2="30" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="38" y1="46" x2="46" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="46" y1="50" x2="46" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- arc showing stretch direction -->
-    <path d="M46 8 Q56 4 62 10" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-  </svg>`,
-
-  // ── Breathing — seated, hands on belly/chest ──
-  breathing: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <rect x="18" y="50" width="44" height="3" rx="1.5" fill="none" stroke="#444" stroke-width="1.5"/>
-    <line x1="20" y1="53" x2="20" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="60" y1="53" x2="60" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
-    <circle cx="40" cy="16" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="40" y1="23" x2="40" y2="46" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- hands resting on chest/belly -->
-    <line x1="40" y1="30" x2="28" y2="36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <line x1="40" y1="30" x2="52" y2="36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <circle cx="27" cy="37" r="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
-    <circle cx="53" cy="37" r="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
-    <line x1="40" y1="46" x2="32" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="32" y1="50" x2="32" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="46" x2="48" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="48" y1="50" x2="48" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- breath arrows -->
-    <path d="M34 26 Q28 22 26 14" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-    <path d="M46 26 Q52 22 54 14" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-  </svg>`,
-
-  // ── Cat-cow — on all fours, spine arched up ──
-  'cat-cow': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <!-- floor line -->
-    <line x1="6" y1="68" x2="74" y2="68" stroke="#333" stroke-width="1.5"/>
-    <!-- head -->
-    <circle cx="66" cy="34" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <!-- arched spine (cat) -->
-    <path d="M60 36 Q50 20 30 24 Q18 26 14 34" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- tail up -->
-    <path d="M14 34 Q8 28 10 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <!-- front arms vertical -->
-    <line x1="58" y1="40" x2="58" y2="62" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="46" y1="38" x2="46" y2="62" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- back legs -->
-    <line x1="22" y1="30" x2="22" y2="62" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="14" y1="34" x2="14" y2="62" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- arch direction arrow -->
-    <path d="M36 18 Q40 12 44 18" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-    <polygon points="44,18 46,14 48,20" fill="#4a9a4a" opacity="0.8"/>
-  </svg>`,
-
-  // ── Knee-to-chest — lying on back, one knee pulled up ──
-  'knee-to-chest': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <line x1="6" y1="68" x2="74" y2="68" stroke="#333" stroke-width="1.5"/>
-    <!-- body lying flat -->
-    <circle cx="68" cy="52" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="62" y1="54" x2="20" y2="58" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- bent knee pulled to chest -->
-    <path d="M48 54 Q44 42 36 40 Q30 40 28 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- hands holding knee -->
-    <circle cx="34" cy="44" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
-    <!-- straight leg on floor -->
-    <line x1="20" y1="58" x2="8" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- arm -->
-    <line x1="55" y1="52" x2="38" y2="44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <!-- arrow pulling knee toward chest -->
-    <path d="M28 48 Q24 44 28 40" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-    <polygon points="28,40 24,38 30,36" fill="#4a9a4a" opacity="0.8"/>
-  </svg>`,
-
-  // ── Thoracic rotation — lying on back, knees dropped to side ──
-  'thoracic-rotation': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <line x1="6" y1="68" x2="74" y2="68" stroke="#333" stroke-width="1.5"/>
-    <!-- body lying -->
-    <circle cx="68" cy="44" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="62" y1="46" x2="20" y2="48" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- arms outstretched in T -->
-    <line x1="46" y1="44" x2="46" y2="30" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <line x1="46" y1="44" x2="46" y2="58" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
-    <!-- knees bent and dropped LEFT -->
-    <path d="M32 46 Q28 52 18 56 Q14 58 12 62" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <path d="M28 48 Q24 54 16 58 Q12 60 10 64" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- rotation arrow -->
-    <path d="M52 36 Q58 32 62 38" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-    <polygon points="62,38 66,36 64,42" fill="#4a9a4a" opacity="0.8"/>
-  </svg>`,
-
-  // ── Chest opener — standing in doorframe, arms at 90° ──
-  'chest-opener': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <!-- doorframe posts -->
-    <rect x="4" y="8" width="7" height="64" rx="2" fill="none" stroke="#444" stroke-width="1.5"/>
-    <rect x="69" y="8" width="7" height="64" rx="2" fill="none" stroke="#444" stroke-width="1.5"/>
-    <circle cx="40" cy="18" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="40" y1="25" x2="40" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- arms up at 90° pressing on frame -->
-    <line x1="40" y1="33" x2="11" y2="33" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="11" y1="33" x2="11" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="33" x2="69" y2="33" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="69" y1="33" x2="69" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- hands on frame -->
-    <circle cx="11" cy="19" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
-    <circle cx="69" cy="19" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
-    <line x1="40" y1="52" x2="33" y2="68" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="52" x2="47" y2="68" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- chest opening arrow -->
-    <path d="M30 28 Q40 22 50 28" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-  </svg>`,
-
-  // ── Legs up the wall — lying on back, legs vertical against wall ──
-  'legs-up-wall': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <!-- wall on right -->
-    <rect x="70" y="4" width="6" height="72" rx="2" fill="none" stroke="#444" stroke-width="1.5"/>
-    <!-- floor -->
-    <line x1="4" y1="68" x2="74" y2="68" stroke="#333" stroke-width="1.5"/>
-    <!-- body lying, hips near wall -->
-    <circle cx="14" cy="54" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="20" y1="56" x2="52" y2="60" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- hips at wall base -->
-    <line x1="52" y1="60" x2="56" y2="64" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
-    <!-- legs up vertical against wall -->
-    <line x1="55" y1="62" x2="62" y2="18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="62" y1="18" x2="70" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <line x1="52" y1="60" x2="60" y2="14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="60" y1="14" x2="70" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <!-- arms at sides -->
-    <line x1="28" y1="56" x2="28" y2="64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  </svg>`,
-
-  // ── Child's pose — kneeling, torso folded forward, arms extended ──
-  'childs-pose': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <line x1="4" y1="68" x2="76" y2="68" stroke="#333" stroke-width="1.5"/>
-    <!-- head on floor -->
-    <circle cx="12" cy="56" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <!-- arms stretched forward on floor -->
-    <line x1="18" y1="54" x2="44" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="44" y1="50" x2="56" y2="50" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-    <!-- second arm -->
-    <line x1="18" y1="58" x2="44" y2="56" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- torso folded / hips up -->
-    <path d="M18 56 Q32 58 46 52 Q54 48 58 44" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- knees on floor, hips at heels -->
-    <line x1="58" y1="44" x2="62" y2="56" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="62" y1="56" x2="68" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="55" y1="46" x2="60" y2="58" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="60" y1="58" x2="66" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- breath arrow upward at back -->
-    <path d="M36 44 Q38 36 42 38" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-  </svg>`,
-
-  // ── Supine spinal twist — lying, both knees dropped to one side ──
-  'spinal-twist': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <line x1="4" y1="68" x2="76" y2="68" stroke="#333" stroke-width="1.5"/>
-    <!-- body lying on back -->
-    <circle cx="68" cy="46" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="62" y1="48" x2="24" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- T arms outstretched -->
-    <line x1="44" y1="46" x2="44" y2="34" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="44" y1="46" x2="44" y2="58" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.35"/>
-    <!-- both knees bent and dropped to LEFT side -->
-    <path d="M38 48 Q32 54 22 58" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="22" y1="58" x2="16" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <path d="M32 50 Q26 56 18 60" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="18" y1="60" x2="12" y2="66" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- twist arrow -->
-    <path d="M50 38 Q56 32 62 38" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-    <polygon points="62,38 66,35 65,42" fill="#4a9a4a" opacity="0.8"/>
-  </svg>`,
-
-  // ── Ankle pumps — seated, foot flexed/pointed ──
-  'ankle-pumps': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <rect x="10" y="44" width="44" height="3" rx="1.5" fill="none" stroke="#444" stroke-width="1.5"/>
-    <line x1="12" y1="47" x2="12" y2="62" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
-    <line x1="52" y1="47" x2="52" y2="62" stroke="#444" stroke-width="1.5" stroke-linecap="round"/>
-    <circle cx="32" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="32" y1="19" x2="32" y2="40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="32" y1="28" x2="18" y2="38" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <line x1="32" y1="28" x2="46" y2="38" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <!-- right leg extended forward -->
-    <line x1="32" y1="40" x2="24" y2="44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="24" y1="44" x2="24" y2="60" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- left leg extended straight out -->
-    <line x1="32" y1="40" x2="40" y2="44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="44" x2="58" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- foot flex + arc showing pump motion -->
-    <path d="M58 50 Q64 46 66 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <path d="M60 46 Q68 40 70 48" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-    <path d="M60 56 Q68 58 70 52" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-  </svg>`,
-
-  // ── Bridge — lying on back, hips lifted ──
-  bridge: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <line x1="4" y1="68" x2="76" y2="68" stroke="#333" stroke-width="1.5"/>
-    <circle cx="68" cy="48" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="62" y1="50" x2="46" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- hips lifted into bridge -->
-    <path d="M46 52 Q38 36 28 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- feet flat on floor -->
-    <line x1="28" y1="48" x2="20" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="36" y1="50" x2="28" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="16" y1="64" x2="26" y2="64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <line x1="24" y1="64" x2="34" y2="64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <!-- arms flat on floor -->
-    <line x1="52" y1="54" x2="52" y2="64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <!-- up arrow for hips -->
-    <path d="M40 40 L40 30" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-    <polygon points="40,28 37,34 43,34" fill="#4a9a4a" opacity="0.8"/>
-  </svg>`,
-
-  // ── Plank — on forearms, body straight ──
-  plank: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <line x1="4" y1="68" x2="76" y2="68" stroke="#333" stroke-width="1.5"/>
-    <circle cx="66" cy="36" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <!-- straight body line -->
-    <line x1="60" y1="40" x2="16" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- forearms on floor -->
-    <line x1="52" y1="42" x2="48" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="48" y1="54" x2="36" y2="54" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <line x1="40" y1="44" x2="36" y2="56" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="36" y1="56" x2="24" y2="56" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <!-- toes on floor -->
-    <line x1="16" y1="50" x2="10" y2="62" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="8" y1="62" x2="16" y2="62" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  </svg>`,
-
-  // ── Hip flexor stretch — low lunge ──
-  'hip-flexor': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <line x1="4" y1="68" x2="76" y2="68" stroke="#333" stroke-width="1.5"/>
-    <!-- upright torso -->
-    <circle cx="44" cy="14" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="44" y1="21" x2="42" y2="44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- arms raised slightly for balance -->
-    <line x1="42" y1="30" x2="26" y2="36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <line x1="42" y1="30" x2="58" y2="36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <!-- front knee bent 90° -->
-    <line x1="42" y1="44" x2="52" y2="56" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="52" y1="56" x2="60" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="56" y1="64" x2="68" y2="64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <!-- back knee on floor -->
-    <line x1="42" y1="44" x2="28" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="28" y1="52" x2="18" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="14" y1="64" x2="24" y2="64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <!-- hip forward arrow -->
-    <path d="M46 44 Q52 40 54 46" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-    <polygon points="54,46 58,44 56,50" fill="#4a9a4a" opacity="0.8"/>
-  </svg>`,
-
-  // ── Squat — feet wide, knees bent, arms forward ──
-  squat: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <line x1="4" y1="72" x2="76" y2="72" stroke="#333" stroke-width="1.5"/>
-    <circle cx="40" cy="14" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <!-- torso slightly forward -->
-    <line x1="40" y1="21" x2="38" y2="44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- arms forward for balance -->
-    <line x1="38" y1="32" x2="18" y2="36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="38" y1="32" x2="58" y2="36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- thighs out wide -->
-    <line x1="38" y1="44" x2="22" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="38" y1="44" x2="54" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- shins vertical, feet out -->
-    <line x1="22" y1="52" x2="16" y2="68" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="54" y1="52" x2="60" y2="68" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="10" y1="68" x2="22" y2="68" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <line x1="54" y1="68" x2="66" y2="68" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    <!-- down arrow -->
-    <path d="M40 46 L40 52" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/>
-    <polygon points="40,54 37,50 43,50" fill="#4a9a4a" opacity="0.8"/>
-  </svg>`,
-
-  // ── Default — standing ──
-  default: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-    <line x1="4" y1="74" x2="76" y2="74" stroke="#333" stroke-width="1.5"/>
-    <circle cx="40" cy="14" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/>
-    <line x1="40" y1="21" x2="40" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="32" x2="24" y2="44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="32" x2="56" y2="44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="50" x2="32" y2="68" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="40" y1="50" x2="48" y2="68" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-  </svg>`
+  seated: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="50" width="44" height="3" rx="1.5" fill="none" stroke="#444" stroke-width="1.5"/><line x1="20" y1="53" x2="20" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="53" x2="60" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><circle cx="40" cy="16" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="40" y1="23" x2="40" y2="46" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="32" x2="26" y2="44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="32" x2="54" y2="44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="46" x2="32" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="32" y1="50" x2="32" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="46" x2="48" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="48" y1="50" x2="48" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  'neck-rolls': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="50" width="44" height="3" rx="1.5" fill="none" stroke="#444" stroke-width="1.5"/><line x1="20" y1="53" x2="20" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="53" x2="60" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><line x1="40" y1="27" x2="40" y2="46" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="34" x2="26" y2="44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="34" x2="54" y2="44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="46" x2="32" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="32" y1="50" x2="32" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="46" x2="48" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="48" y1="50" x2="48" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="44" cy="18" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="40" y1="23" x2="40" y2="27" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M28 12 Q40 4 52 12" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/></svg>`,
+  'shoulder-rolls': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="50" width="44" height="3" rx="1.5" fill="none" stroke="#444" stroke-width="1.5"/><line x1="20" y1="53" x2="20" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="53" x2="60" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><circle cx="40" cy="16" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="40" y1="23" x2="40" y2="46" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="46" x2="32" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="32" y1="50" x2="32" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="46" x2="48" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="48" y1="50" x2="48" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="32" x2="22" y2="28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="32" x2="58" y2="28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M16 24 Q12 32 18 38" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/><path d="M64 24 Q68 32 62 38" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/></svg>`,
+  'side-stretch': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="50" width="44" height="3" rx="1.5" fill="none" stroke="#444" stroke-width="1.5"/><line x1="20" y1="53" x2="20" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="53" x2="60" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><circle cx="40" cy="14" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="40" y1="21" x2="38" y2="46" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="32" x2="56" y2="24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="56" y1="24" x2="62" y2="10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="32" x2="24" y2="46" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="38" y1="46" x2="30" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="30" y1="50" x2="30" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="46" x2="46" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="46" y1="50" x2="46" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  breathing: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="50" width="44" height="3" rx="1.5" fill="none" stroke="#444" stroke-width="1.5"/><line x1="20" y1="53" x2="20" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><line x1="60" y1="53" x2="60" y2="68" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><circle cx="40" cy="16" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="40" y1="23" x2="40" y2="46" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="30" x2="28" y2="36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="30" x2="52" y2="36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="27" cy="37" r="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="53" cy="37" r="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="40" y1="46" x2="32" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="32" y1="50" x2="32" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="46" x2="48" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="48" y1="50" x2="48" y2="65" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M34 26 Q28 22 26 14" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/><path d="M46 26 Q52 22 54 14" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/></svg>`,
+  'cat-cow': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><line x1="6" y1="68" x2="74" y2="68" stroke="#333" stroke-width="1.5"/><circle cx="66" cy="34" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M60 36 Q50 20 30 24 Q18 26 14 34" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M14 34 Q8 28 10 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="58" y1="40" x2="58" y2="62" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="46" y1="38" x2="46" y2="62" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="22" y1="30" x2="22" y2="62" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="14" y1="34" x2="14" y2="62" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M36 18 Q40 12 44 18" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/></svg>`,
+  'knee-to-chest': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><line x1="6" y1="68" x2="74" y2="68" stroke="#333" stroke-width="1.5"/><circle cx="68" cy="52" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="62" y1="54" x2="20" y2="58" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M48 54 Q44 42 36 40 Q30 40 28 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="34" cy="44" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="20" y1="58" x2="8" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="55" y1="52" x2="38" y2="44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M28 48 Q24 44 28 40" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/></svg>`,
+  'spinal-twist': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><line x1="4" y1="68" x2="76" y2="68" stroke="#333" stroke-width="1.5"/><circle cx="68" cy="46" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="62" y1="48" x2="24" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="44" y1="46" x2="44" y2="34" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M38 48 Q32 54 22 58" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="22" y1="58" x2="16" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M32 50 Q26 56 18 60" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="18" y1="60" x2="12" y2="66" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M50 38 Q56 32 62 38" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/></svg>`,
+  'thoracic-rotation': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><line x1="4" y1="68" x2="76" y2="68" stroke="#333" stroke-width="1.5"/><circle cx="68" cy="44" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="62" y1="46" x2="20" y2="48" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="46" y1="44" x2="46" y2="30" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M36 40 Q28 30 28 52" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M48 38 Q46 28 48 52" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M52 36 Q58 32 62 38" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/></svg>`,
+  'chest-opener': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="8" width="7" height="64" rx="2" fill="none" stroke="#444" stroke-width="1.5"/><rect x="69" y="8" width="7" height="64" rx="2" fill="none" stroke="#444" stroke-width="1.5"/><circle cx="40" cy="18" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="40" y1="25" x2="40" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="33" x2="11" y2="33" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="11" y1="33" x2="11" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="33" x2="69" y2="33" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="69" y1="33" x2="69" y2="20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="52" x2="33" y2="68" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="52" x2="47" y2="68" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  'legs-up-wall': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><rect x="70" y="4" width="6" height="72" rx="2" fill="none" stroke="#444" stroke-width="1.5"/><line x1="4" y1="68" x2="74" y2="68" stroke="#333" stroke-width="1.5"/><circle cx="14" cy="54" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="20" y1="56" x2="52" y2="60" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="55" y1="62" x2="62" y2="18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="62" y1="18" x2="70" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="52" y1="60" x2="60" y2="14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="60" y1="14" x2="70" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+  'childs-pose': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><line x1="4" y1="68" x2="76" y2="68" stroke="#333" stroke-width="1.5"/><circle cx="12" cy="56" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="18" y1="54" x2="44" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="18" y1="58" x2="44" y2="56" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M18 56 Q32 58 46 52 Q54 48 58 44" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="58" y1="44" x2="62" y2="56" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="62" y1="56" x2="68" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="55" y1="46" x2="60" y2="58" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="60" y1="58" x2="66" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  'ankle-pumps': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="44" width="44" height="3" rx="1.5" fill="none" stroke="#444" stroke-width="1.5"/><line x1="12" y1="47" x2="12" y2="62" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><line x1="52" y1="47" x2="52" y2="62" stroke="#444" stroke-width="1.5" stroke-linecap="round"/><circle cx="32" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="32" y1="19" x2="32" y2="40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="32" y1="28" x2="18" y2="38" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="28" x2="46" y2="38" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="40" x2="24" y2="44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="24" y1="44" x2="24" y2="60" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="32" y1="40" x2="40" y2="44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="44" x2="58" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M58 50 Q64 46 66 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M60 46 Q68 40 70 48" fill="none" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/></svg>`,
+  bridge: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><line x1="4" y1="68" x2="76" y2="68" stroke="#333" stroke-width="1.5"/><circle cx="68" cy="48" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="62" y1="50" x2="46" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M46 52 Q38 36 28 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="28" y1="48" x2="20" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="36" y1="50" x2="28" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="52" y1="54" x2="52" y2="64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M40 40 L40 30" stroke="#4a9a4a" stroke-width="1.5" stroke-dasharray="3,2"/><polygon points="40,28 37,34 43,34" fill="#4a9a4a" opacity="0.8"/></svg>`,
+  plank: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><line x1="4" y1="68" x2="76" y2="68" stroke="#333" stroke-width="1.5"/><circle cx="66" cy="36" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="60" y1="40" x2="16" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="52" y1="42" x2="48" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="48" y1="54" x2="36" y2="54" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="44" x2="36" y2="56" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="36" y1="56" x2="24" y2="56" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="50" x2="10" y2="62" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  'hip-flexor': `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><line x1="4" y1="68" x2="76" y2="68" stroke="#333" stroke-width="1.5"/><circle cx="44" cy="14" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="44" y1="21" x2="42" y2="44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="42" y1="30" x2="26" y2="36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="42" y1="30" x2="58" y2="36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="42" y1="44" x2="52" y2="56" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="52" y1="56" x2="60" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="42" y1="44" x2="28" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="28" y1="52" x2="18" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  squat: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><line x1="4" y1="72" x2="76" y2="72" stroke="#333" stroke-width="1.5"/><circle cx="40" cy="14" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="40" y1="21" x2="38" y2="44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="32" x2="18" y2="36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="32" x2="58" y2="36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="44" x2="22" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="38" y1="44" x2="54" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="22" y1="52" x2="16" y2="68" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="54" y1="52" x2="60" y2="68" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  standing: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><line x1="4" y1="74" x2="76" y2="74" stroke="#333" stroke-width="1.5"/><circle cx="40" cy="14" r="7" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="40" y1="21" x2="40" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="32" x2="24" y2="44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="32" x2="56" y2="44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="50" x2="32" y2="68" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="50" x2="48" y2="68" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  supine: `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><line x1="4" y1="68" x2="76" y2="68" stroke="#333" stroke-width="1.5"/><circle cx="68" cy="50" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><line x1="62" y1="52" x2="10" y2="56" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="40" y1="52" x2="40" y2="44" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="28" y1="54" x2="22" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="46" y1="54" x2="52" y2="64" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>`
 };
 
-// ─── Match exercise name → SVG ───
 function getExerciseSVG(exerciseName) {
   const n = (exerciseName || '').toLowerCase();
-  if (/breath|diaphragm|spinal breath/.test(n))        return EXERCISE_SVG.breathing;
-  if (/shoulder roll/.test(n))                          return EXERCISE_SVG['shoulder-rolls'];
-  if (/neck roll|cervical/.test(n))                     return EXERCISE_SVG['neck-rolls'];
-  if (/side stretch|lateral/.test(n))                   return EXERCISE_SVG['side-stretch'];
-  if (/cat|cow/.test(n))                                return EXERCISE_SVG['cat-cow'];
-  if (/knee.?to.?chest|supine knee/.test(n))            return EXERCISE_SVG['knee-to-chest'];
-  if (/spinal twist|supine twist|rotation/.test(n))     return EXERCISE_SVG['spinal-twist'];
-  if (/thoracic/.test(n))                               return EXERCISE_SVG['thoracic-rotation'];
-  if (/chest.?open|doorframe|pec/.test(n))              return EXERCISE_SVG['chest-opener'];
-  if (/legs.?up|wall.?hamstring/.test(n))               return EXERCISE_SVG['legs-up-wall'];
-  if (/child|childs/.test(n))                           return EXERCISE_SVG['childs-pose'];
-  if (/ankle pump|ankle circle/.test(n))                return EXERCISE_SVG['ankle-pumps'];
-  if (/bridge|glute/.test(n))                           return EXERCISE_SVG.bridge;
-  if (/plank/.test(n))                                  return EXERCISE_SVG.plank;
-  if (/hip.?flex|lunge/.test(n))                        return EXERCISE_SVG['hip-flexor'];
-  if (/squat/.test(n))                                  return EXERCISE_SVG.squat;
-  // Fallback: seated for anything that sounds chair/desk-based
-  if (/seated|sit|desk|chair/.test(n))                  return EXERCISE_SVG.seated;
-  return EXERCISE_SVG.default;
+  if (/breath|diaphragm/.test(n))              return EXERCISE_SVG.breathing;
+  if (/shoulder roll/.test(n))                  return EXERCISE_SVG['shoulder-rolls'];
+  if (/neck roll|cervical/.test(n))             return EXERCISE_SVG['neck-rolls'];
+  if (/side stretch|lateral/.test(n))           return EXERCISE_SVG['side-stretch'];
+  if (/cat|cow/.test(n))                        return EXERCISE_SVG['cat-cow'];
+  if (/knee.?to.?chest|supine knee/.test(n))   return EXERCISE_SVG['knee-to-chest'];
+  if (/spinal twist|supine twist/.test(n))      return EXERCISE_SVG['spinal-twist'];
+  if (/thoracic/.test(n))                       return EXERCISE_SVG['thoracic-rotation'];
+  if (/chest.?open|doorframe|pec/.test(n))      return EXERCISE_SVG['chest-opener'];
+  if (/legs.?up|wall.?hamstring/.test(n))       return EXERCISE_SVG['legs-up-wall'];
+  if (/child|childs/.test(n))                   return EXERCISE_SVG['childs-pose'];
+  if (/ankle pump|ankle circle/.test(n))        return EXERCISE_SVG['ankle-pumps'];
+  if (/bridge|glute bridge/.test(n))            return EXERCISE_SVG.bridge;
+  if (/plank/.test(n))                          return EXERCISE_SVG.plank;
+  if (/hip.?flex|lunge/.test(n))               return EXERCISE_SVG['hip-flexor'];
+  if (/squat/.test(n))                          return EXERCISE_SVG.squat;
+  if (/seated|sit|desk|chair/.test(n))          return EXERCISE_SVG.seated;
+  if (/supine|lying|floor/.test(n))             return EXERCISE_SVG.supine;
+  return EXERCISE_SVG.standing;
 }
+
+// ─── YouTube search URL builder ───
+function youtubeURL(exerciseName) {
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(exerciseName + ' exercise tutorial how to')}`;
+}
+
+// ═══════════════════════════════════════════════════════
+// THE EXERCISE LIBRARY — 100 exercises
+// Each has: id, name, tags, goal[], symptoms[], steps[], 
+//           safetyNote, duration, reps, svg key, conditions[]
+// ═══════════════════════════════════════════════════════
+const EXERCISE_LIBRARY = [
+  // ── BREATHING & RELAXATION ──
+  { id:'diaphragmatic-breathing', name:'Diaphragmatic Breathing', tags:['breathing','core','relaxation'], goal:['flexibility','recovery'], symptoms:['stressed','anxious','tight chest','pain','nerve','tingling'], steps:['Sit or lie down comfortably','Place one hand on chest, one on belly','Inhale slowly through nose for 4 counts — belly rises, chest stays still','Exhale slowly through mouth for 4 counts','Repeat 8–10 breaths'], safetyNote:'Stop if you feel dizzy. Breathe gently.', duration:'3 min', reps:'10 breaths', svg:'breathing', conditions:['spine','nerve','back','acl'] },
+  { id:'box-breathing', name:'Box Breathing', tags:['breathing','relaxation','stress'], goal:['recovery'], symptoms:['stressed','anxious','cant focus','pain flare'], steps:['Sit upright','Inhale for 4 counts','Hold for 4 counts','Exhale for 4 counts','Hold for 4 counts','Repeat 4–6 rounds'], safetyNote:'If lightheaded, return to normal breathing.', duration:'3 min', reps:'6 rounds', svg:'breathing', conditions:['spine','nerve','back','acl'] },
+  { id:'4-7-8-breathing', name:'4-7-8 Breathing', tags:['breathing','relaxation','sleep'], goal:['recovery'], symptoms:['stressed','cant sleep','anxious','pain'], steps:['Sit or lie comfortably','Inhale through nose for 4 counts','Hold breath for 7 counts','Exhale through mouth for 8 counts','Repeat 4 cycles'], safetyNote:'Skip if pregnant. Breathe normally if dizzy.', duration:'2 min', reps:'4 cycles', svg:'breathing', conditions:['spine','nerve','back','acl'] },
+
+  // ── NECK & SHOULDERS ──
+  { id:'neck-rolls', name:'Neck Rolls', tags:['neck','shoulders','desk','mobility'], goal:['flexibility','recovery'], symptoms:['neck stiff','neck tight','screen fatigue','headache','shoulder pain'], steps:['Sit tall in your chair','Drop chin to chest gently','Slowly roll ear to right shoulder','Roll head back (keep it gentle)','Roll ear to left shoulder','Return to center'], safetyNote:'Never force backward. Stop if dizzy or sharp pain.', duration:'2 min', reps:'5 each direction', svg:'neck-rolls', conditions:['neck','spine'] },
+  { id:'shoulder-rolls', name:'Shoulder Rolls', tags:['shoulders','neck','desk','tension'], goal:['flexibility'], symptoms:['shoulder tight','shoulder pain','neck stiff','desk fatigue','upper back tight'], steps:['Sit or stand tall','Lift both shoulders up toward your ears','Roll them backward in a large circle','Let them drop down and forward','Reverse direction: forward, up, back, down'], safetyNote:'Keep movements slow and controlled.', duration:'2 min', reps:'10 each direction', svg:'shoulder-rolls', conditions:[] },
+  { id:'ear-to-shoulder-stretch', name:'Ear to Shoulder Stretch', tags:['neck','shoulders','desk'], goal:['flexibility'], symptoms:['neck tight','one side stiff','headache'], steps:['Sit tall','Gently tilt right ear toward right shoulder','Hold 20–30 seconds','Return to center','Repeat on left side','Keep shoulders relaxed — do not lift them'], safetyNote:'Never pull your head. Gravity is enough.', duration:'2 min', reps:'3 each side', svg:'neck-rolls', conditions:['neck'] },
+  { id:'chin-tucks', name:'Chin Tucks', tags:['neck','posture','desk'], goal:['flexibility','recovery'], symptoms:['neck pain','forward head','screen fatigue','headache'], steps:['Sit or stand tall','Look straight ahead','Gently pull chin straight back (making a double chin)','Hold 3–5 seconds','Release and repeat'], safetyNote:'Movement is small — just 1–2 cm. Do not tilt head down.', duration:'2 min', reps:'10 reps', svg:'neck-rolls', conditions:['neck','spine'] },
+  { id:'neck-side-stretch', name:'Neck Side Stretch', tags:['neck','desk','mobility'], goal:['flexibility'], symptoms:['neck tight','one side stiff','shoulder pain'], steps:['Sit tall','Gently tilt right ear to right shoulder','Place right hand lightly on left temple for gentle added stretch','Hold 30 seconds','Switch sides'], safetyNote:'Use minimal hand pressure. Stop if tingling in arm.', duration:'2 min', reps:'3 each side', svg:'neck-rolls', conditions:['neck'] },
+
+  // ── UPPER BACK & THORACIC ──
+  { id:'thoracic-rotation', name:'Thoracic Rotation', tags:['upper back','spine','mobility'], goal:['flexibility','recovery'], symptoms:['upper back stiff','back tight','cant rotate','desk fatigue'], steps:['Lie on your back with knees bent, feet flat','Stretch arms out to the sides in a T','Keep knees together and drop them slowly to the left','Hold 30 seconds, feeling the rotation in your mid back','Bring knees back to center and repeat right'], safetyNote:'Minimal lumbar movement. Stop if sharp pain.', duration:'3 min', reps:'3 each side', svg:'thoracic-rotation', conditions:['back','spine'] },
+  { id:'cat-cow', name:'Cat-Cow Stretch', tags:['spine','back','mobility','floor'], goal:['flexibility','recovery'], symptoms:['back stiff','spine tight','morning stiffness','back ache','lower back pain'], steps:['Start on hands and knees — wrists under shoulders, knees under hips','Inhale: drop belly toward floor, lift chest and tailbone (Cow)','Exhale: round spine toward ceiling, tuck chin and pelvis (Cat)','Move slowly, linking breath to movement','Continue for 10 reps'], safetyNote:'Keep movements gentle. Stop if tingling increases.', duration:'3 min', reps:'10 reps', svg:'cat-cow', conditions:['spine','nerve','back'] },
+  { id:'chest-opener', name:'Chest Opener Stretch', tags:['chest','posture','desk','upper back'], goal:['flexibility'], symptoms:['chest tight','hunched forward','desk fatigue','shoulder pain','upper back tight'], steps:['Stand in a doorframe','Bend elbows to 90°, place forearms on the door frame','Step one foot forward gently','Lean body forward until you feel a chest stretch','Hold 30 seconds'], safetyNote:'Do not overarch lower back. Keep core gently engaged.', duration:'3 min', reps:'3 x 30 sec', svg:'chest-opener', conditions:['back'] },
+  { id:'thoracic-extension', name:'Thoracic Extension on Chair', tags:['upper back','desk','posture'], goal:['flexibility'], symptoms:['upper back tight','hunched','desk fatigue','mid back pain'], steps:['Sit in a firm chair','Clasp hands behind your head','Gently arch upper back over the top of the chair back','Hold 10–15 seconds','Return to upright'], safetyNote:'Only arch the upper back. Do not strain neck.', duration:'2 min', reps:'5 reps', svg:'seated', conditions:['back'] },
+  { id:'wall-angels', name:'Wall Angels', tags:['posture','upper back','shoulders'], goal:['flexibility'], symptoms:['hunched','shoulder pain','upper back tight','posture'], steps:['Stand with back flat against a wall','Feet 6 inches from wall, head and back touching it','Raise arms to goalpost position (elbows bent 90°) against wall','Slowly slide arms up overhead, keeping contact with wall','Slowly return down'], safetyNote:'Do not force if arms cannot stay on wall — just go as far as comfortable.', duration:'3 min', reps:'10 reps', svg:'standing', conditions:['back','shoulder'] },
+
+  // ── LOWER BACK ──
+  { id:'knee-to-chest', name:'Knee to Chest Stretch', tags:['lower back','hips','floor'], goal:['flexibility','recovery'], symptoms:['lower back pain','back stiff','hip tight','morning stiffness'], steps:['Lie on your back with both knees bent','Pull one knee gently toward your chest with both hands','Hold 30 seconds, feeling the lower back release','Switch legs'], safetyNote:'Keep the other foot flat on the floor. Stop if knee pain.', duration:'3 min', reps:'3 x 30 sec each side', svg:'knee-to-chest', conditions:['back','spine','acl'] },
+  { id:'double-knee-to-chest', name:'Double Knee to Chest', tags:['lower back','floor'], goal:['recovery'], symptoms:['lower back pain','back spasm','back stiff'], steps:['Lie on your back','Pull both knees toward your chest','Wrap arms around shins','Rock gently side to side if comfortable','Hold 30–60 seconds'], safetyNote:'Avoid if this increases leg tingling.', duration:'2 min', reps:'3 x 30 sec', svg:'knee-to-chest', conditions:['back','spine'] },
+  { id:'pelvic-tilt', name:'Pelvic Tilt', tags:['lower back','core','floor'], goal:['recovery'], symptoms:['lower back pain','back stiff','back spasm'], steps:['Lie on your back, knees bent, feet flat','Gently flatten your lower back against the floor by tightening your abs','Hold 5 seconds','Release and repeat'], safetyNote:'Very small movement. Never force or arch aggressively.', duration:'2 min', reps:'10 reps', svg:'supine', conditions:['back','spine','nerve'] },
+  { id:'spinal-twist', name:'Supine Spinal Twist', tags:['spine','lower back','hips','floor'], goal:['flexibility','recovery'], symptoms:['back stiff','hip tight','spine tight','morning stiffness'], steps:['Lie on your back, knees bent','Let both knees fall slowly to the left','Extend arms to the sides in a T','Turn head gently to the right if comfortable','Hold 30–60 seconds. Switch sides'], safetyNote:'Keep shoulders on the floor. Stop if sharp pain or tingling increases.', duration:'3 min', reps:'3 each side', svg:'spinal-twist', conditions:['back','spine','nerve'] },
+  { id:'child-pose', name:"Child's Pose", tags:['back','hips','floor','relaxation'], goal:['flexibility','recovery'], symptoms:['back pain','back stiff','hip tight','need to relax'], steps:["Start kneeling, sit back toward heels",'Fold forward, extending arms in front on the floor','Rest forehead on the floor or on stacked hands','Breathe deeply into your back body','Hold 45–60 seconds'], safetyNote:'Place pillow under hips if knees are uncomfortable. Avoid if tingling worsens.', duration:'3 min', reps:'3 x 45 sec', svg:'childs-pose', conditions:['back','spine'] },
+  { id:'bird-dog', name:'Bird Dog', tags:['core','back','balance','floor'], goal:['strength','recovery'], symptoms:['back weak','core weak','back pain'], steps:['Start on hands and knees','Extend right arm forward and left leg back simultaneously','Hold 5 seconds, keeping back flat','Return to start','Switch sides — left arm, right leg'], safetyNote:'Do not let hips rotate. Keep back flat like a table. Stop if back pain.', duration:'3 min', reps:'10 each side', svg:'cat-cow', conditions:['back','spine'] },
+
+  // ── HIPS & GLUTES ──
+  { id:'hip-flexor-stretch', name:'Hip Flexor Stretch', tags:['hips','lower back','lunge','floor'], goal:['flexibility'], symptoms:['hip tight','lower back pain','stiff after sitting'], steps:['Kneel on right knee, left foot forward','Keeping back straight, shift hips forward until stretch felt in right hip front','Raise both arms overhead for deeper stretch','Hold 30 seconds. Switch sides'], safetyNote:'Do not arch lower back. Keep front knee behind toes.', duration:'3 min', reps:'3 x 30 sec each side', svg:'hip-flexor', conditions:['back','acl'] },
+  { id:'figure-4-stretch', name:'Figure-4 Hip Stretch', tags:['hips','glutes','floor'], goal:['flexibility'], symptoms:['hip tight','hip pain','glute tight','piriformis'], steps:['Lie on your back, knees bent, feet flat','Cross right ankle over left knee','Either hold this position or pull left thigh toward chest','Feel stretch in right glute and outer hip','Hold 30–60 seconds. Switch sides'], safetyNote:'Stop if knee pain. Keep lower back relaxed on floor.', duration:'3 min', reps:'3 each side', svg:'knee-to-chest', conditions:['acl','hip'] },
+  { id:'glute-bridge', name:'Glute Bridge', tags:['glutes','hips','core','floor'], goal:['strength','recovery'], symptoms:['glute weak','hip pain','lower back pain'], steps:['Lie on your back, knees bent, feet flat hip-width apart','Press feet into floor and squeeze glutes','Lift hips until body forms a straight line from knees to shoulders','Hold 2 seconds at top','Lower slowly'], safetyNote:'Do not hyperextend lower back at top. Squeeze glutes, not back.', duration:'3 min', reps:'15 reps', svg:'bridge', conditions:['back','acl'] },
+  { id:'clamshell', name:'Clamshell', tags:['hips','glutes','floor'], goal:['strength','recovery'], symptoms:['hip weak','knee pain','hip pain','acl recovery'], steps:['Lie on your side with knees bent 45°, feet together','Keep feet touching and rotate top knee toward ceiling','Go only as high as you can without rolling your pelvis back','Hold 2 seconds at top, lower slowly'], safetyNote:'Keep pelvis stable — do not let it roll back.', duration:'3 min', reps:'15 each side', svg:'supine', conditions:['acl','hip','knee'] },
+  { id:'hip-circles', name:'Standing Hip Circles', tags:['hips','mobility','standing'], goal:['flexibility'], symptoms:['hip stiff','hip tight','lower back stiff'], steps:['Stand with feet hip-width apart, hands on hips','Circle hips clockwise in a large smooth circle','Do 10 reps, then switch to counter-clockwise'], safetyNote:'Hold a wall for balance if needed.', duration:'2 min', reps:'10 each direction', svg:'standing', conditions:['hip','back'] },
+  { id:'seated-hip-stretch', name:'Seated Hip Stretch', tags:['hips','desk','seated'], goal:['flexibility'], symptoms:['hip tight','stiff after sitting','lower back pain'], steps:['Sit in a chair','Cross right ankle over left knee','Sit up tall and gently lean forward','Hold 30 seconds. Switch legs'], safetyNote:'Stop if knee pain. Do not round your back.', duration:'2 min', reps:'3 each side', svg:'seated', conditions:['acl','hip'] },
+
+  // ── KNEES & LEGS ──
+  { id:'ankle-pumps', name:'Ankle Pumps and Circles', tags:['ankles','knees','circulation'], goal:['recovery'], symptoms:['ankle stiff','knee pain','circulation','swollen feet','acl recovery'], steps:['Sit with one leg extended','Flex foot toward you (toes up) then point away (toes down)','Do 20 pumps per foot','Then draw 10 circles each direction with your foot'], safetyNote:'ACL-safe. Gentle and controlled movements only.', duration:'3 min', reps:'20 pumps + 10 circles each foot', svg:'ankle-pumps', conditions:['acl','knee'] },
+  { id:'straight-leg-raise', name:'Straight Leg Raise', tags:['knees','quads','floor'], goal:['strength','recovery'], symptoms:['knee weak','acl recovery','quad weak'], steps:['Lie on your back','Bend one knee, foot flat on floor','Keep other leg straight','Tighten quad of straight leg, then lift it to height of bent knee','Hold 2 seconds, lower slowly'], safetyNote:'No knee bending on the working leg. Stop if hip flexor pain.', duration:'3 min', reps:'15 each side', svg:'supine', conditions:['acl','knee'] },
+  { id:'terminal-knee-extension', name:'Terminal Knee Extension', tags:['knees','quads','standing'], goal:['recovery'], symptoms:['acl recovery','knee weak','knee pain'], steps:['Stand facing a wall','Place hands on wall for balance','Slightly bend both knees','Straighten one knee fully, squeezing quad at the end','Hold 2 seconds. Repeat'], safetyNote:'Only last 15° of knee extension. No deep bending.', duration:'2 min', reps:'15 each side', svg:'standing', conditions:['acl','knee'] },
+  { id:'wall-slide', name:'Wall Slide Squat', tags:['knees','quads','back'], goal:['strength'], symptoms:['knee weak','quad weak','acl recovery'], steps:['Stand with back against wall, feet hip-width, 12 inches from wall','Slide down until knees are at 45°','Hold 5–10 seconds','Slide back up'], safetyNote:'Never go past 90° knee bend. Stop if pain.', duration:'3 min', reps:'10 reps', svg:'squat', conditions:['acl','knee'] },
+  { id:'heel-slides', name:'Heel Slides', tags:['knees','floor','acl'], goal:['recovery'], symptoms:['acl recovery','knee stiff','knee pain'], steps:['Lie on your back, legs straight','Slowly slide right heel toward your buttocks, bending knee','Go only as far as comfortable','Slowly straighten back out'], safetyNote:'Move only within pain-free range. Stop at 90° if ACL.', duration:'2 min', reps:'10 each side', svg:'supine', conditions:['acl','knee'] },
+  { id:'standing-quad-stretch', name:'Standing Quad Stretch', tags:['quads','knees','standing'], goal:['flexibility'], symptoms:['quad tight','knee pain','hip tight'], steps:['Stand near a wall for balance','Bend right knee, bring heel toward glutes','Hold ankle (not foot) with right hand','Keep knees together, stand tall','Hold 30 seconds. Switch sides'], safetyNote:'Do not pull on the foot. Keep knee pointing down.', duration:'2 min', reps:'3 each side', svg:'standing', conditions:['acl','knee'] },
+  { id:'hamstring-stretch-floor', name:'Supine Hamstring Stretch', tags:['hamstrings','back','floor'], goal:['flexibility'], symptoms:['hamstring tight','back of leg tight','lower back pain'], steps:['Lie on your back','Bend one knee, foot flat','Loop a towel or strap around the other foot','Gently straighten that leg toward ceiling','Hold 30 seconds. Switch sides'], safetyNote:'Keep a slight bend in the raised knee. Do not force.', duration:'3 min', reps:'3 x 30 sec each side', svg:'legs-up-wall', conditions:['acl','knee','back'] },
+
+  // ── CORE ──
+  { id:'dead-bug', name:'Dead Bug', tags:['core','stability','floor'], goal:['strength','recovery'], symptoms:['core weak','back pain','back instability'], steps:['Lie on your back, arms straight up toward ceiling','Bend knees to 90°, shins parallel to floor','Slowly lower right arm overhead and left leg toward floor simultaneously','Keep lower back pressed to floor throughout','Return to start. Switch sides'], safetyNote:'If lower back lifts off floor — stop and reduce range of motion.', duration:'3 min', reps:'10 each side', svg:'supine', conditions:['back','spine'] },
+  { id:'plank', name:'Forearm Plank', tags:['core','strength','floor'], goal:['strength'], symptoms:['core weak'], steps:['Lie face down, forearms on floor, elbows under shoulders','Push up onto forearms and toes','Keep body in a straight line — hips level, not raised or sagged','Breathe normally','Hold for target time'], safetyNote:'Stop if lower back sinks or shoulders shake excessively.', duration:'30–60 sec', reps:'3 sets', svg:'plank', conditions:['back'] },
+  { id:'side-plank', name:'Side Plank (Modified)', tags:['core','hips','floor'], goal:['strength'], symptoms:['core weak','hip weak'], steps:['Lie on your side, knees bent (easier) or legs straight','Prop up on bottom forearm, elbow under shoulder','Lift hips off floor, forming a straight line','Hold for target time. Switch sides'], safetyNote:'Modified (knees bent) is safer for beginners. Stop if shoulder pain.', duration:'20–40 sec', reps:'3 each side', svg:'supine', conditions:['shoulder','back'] },
+  { id:'pelvic-floor', name:'Pelvic Floor Exercises', tags:['core','pelvic','seated'], goal:['recovery'], symptoms:['core weak','pelvic pain','post surgery'], steps:['Sit or lie comfortably','Tighten the muscles you would use to stop urinating','Hold for 5 seconds','Fully release for 5 seconds','Repeat'], safetyNote:'Do not hold breath. Do not tighten buttocks or thighs.', duration:'5 min', reps:'10 reps', svg:'seated', conditions:['back','spine'] },
+
+  // ── FLEXIBILITY & STRETCHING ──
+  { id:'seated-forward-fold', name:'Seated Forward Fold', tags:['hamstrings','back','floor'], goal:['flexibility'], symptoms:['hamstring tight','back stiff','hip tight'], steps:['Sit on floor with legs extended straight','Sit tall, inhale to lengthen spine','Exhale and hinge forward from hips — not rounding back','Reach toward feet as far as comfortable','Hold 30–60 seconds'], safetyNote:'Stop if back rounds severely — bend knees slightly instead.', duration:'3 min', reps:'3 x 30 sec', svg:'supine', conditions:['back','spine','nerve'] },
+  { id:'butterfly-stretch', name:'Butterfly Stretch', tags:['hips','groin','floor'], goal:['flexibility'], symptoms:['hip tight','groin tight','inner thigh pain'], steps:['Sit on floor, bring soles of feet together','Let knees fall out to sides','Sit tall — do not round lower back','Hold ankles and gently press knees toward floor with elbows','Hold 30–60 seconds'], safetyNote:'Do not bounce knees. Gentle press only.', duration:'3 min', reps:'3 x 30 sec', svg:'supine', conditions:['hip','acl'] },
+  { id:'pigeon-prep', name:'Pigeon Pose Prep (Supine)', tags:['hips','glutes','floor'], goal:['flexibility'], symptoms:['hip tight','glute tight','piriformis'], steps:['Lie on back, knees bent','Cross right ankle over left knee (figure-4 position)','Flex right foot to protect knee','Pull left thigh toward chest to increase stretch','Hold 60 seconds. Switch sides'], safetyNote:'This is the safe version of Pigeon Pose. Stop if knee discomfort.', duration:'3 min', reps:'3 each side', svg:'knee-to-chest', conditions:['acl','knee','hip'] },
+  { id:'doorway-chest-stretch', name:'Doorway Chest Stretch', tags:['chest','posture','standing'], goal:['flexibility'], symptoms:['chest tight','rounded shoulders','desk fatigue'], steps:['Stand in a doorway','Place both forearms on the door frame at 90°','Step one foot forward','Lean body forward gently until chest stretch felt','Hold 30 seconds'], safetyNote:'Do not overarch lower back.', duration:'2 min', reps:'3 x 30 sec', svg:'chest-opener', conditions:['back'] },
+  { id:'seated-side-stretch', name:'Seated Side Stretch', tags:['spine','desk','sides'], goal:['flexibility'], symptoms:['side tight','back stiff','desk fatigue'], steps:['Sit tall in chair','Raise right arm overhead','Lean gently to the left, reaching right arm over','Feel stretch along right side body','Hold 20 seconds. Switch sides'], safetyNote:'Do not collapse into the stretch. Keep breathing.', duration:'2 min', reps:'3 each side', svg:'side-stretch', conditions:['back','spine'] },
+  { id:'thread-needle', name:'Thread the Needle', tags:['upper back','rotation','floor'], goal:['flexibility'], symptoms:['upper back tight','rotation stiff','thoracic stiff'], steps:['Start on hands and knees','Slide right arm under left arm along floor, palm up','Rest right shoulder and cheek on floor','Hold 30 seconds. Switch sides'], safetyNote:'Move slowly. Stop if shoulder discomfort.', duration:'3 min', reps:'3 each side', svg:'cat-cow', conditions:['back','shoulder'] },
+  { id:'legs-up-wall', name:'Legs Up the Wall', tags:['recovery','circulation','floor'], goal:['recovery','flexibility'], symptoms:['tired legs','swollen feet','lower back pain','need to rest'], steps:['Sit sideways close to a wall','Swing legs up as you lie back','Rest legs against wall, arms at sides','Relax and breathe deeply','Stay for 3–10 minutes'], safetyNote:'ACL-safe. Elevates legs safely. Avoid if glaucoma.', duration:'5–10 min', reps:'Hold', svg:'legs-up-wall', conditions:['acl','knee','back','nerve'] },
+  { id:'childs-pose', name:"Child's Pose", tags:['back','hips','relaxation','floor'], goal:['flexibility','recovery'], symptoms:['back pain','need to relax','hip tight','back stiff'], steps:["Kneel on the floor, knees wide, big toes touching",'Sit hips back toward heels','Fold forward, extending arms long in front','Rest forehead on floor','Breathe into your back. Hold 1–2 minutes'], safetyNote:'Place blanket under knees if uncomfortable.', duration:'2 min', reps:'Hold', svg:'childs-pose', conditions:['back','spine'] },
+
+  // ── POSTURE & DESK BREAKS ──
+  { id:'seated-spinal-breathing', name:'Seated Spinal Breathing', tags:['desk','posture','breathing'], goal:['flexibility','recovery'], symptoms:['desk fatigue','back stiff','spine tight','posture'], steps:['Sit at edge of chair, feet flat','Sit tall — imagine string pulling crown of head up','Hands on thighs','Inhale: lift chest, gently lengthen spine','Exhale: soften shoulders down','10 slow breaths'], safetyNote:'No forward folding. Stop if tingling appears.', duration:'2 min', reps:'10 breaths', svg:'breathing', conditions:['spine','nerve','back'] },
+  { id:'seated-cat-cow', name:'Seated Cat-Cow', tags:['desk','spine','mobility'], goal:['flexibility'], symptoms:['back stiff','spine tight','desk fatigue'], steps:['Sit at edge of chair, hands on knees','Inhale: arch upper back, lift chest (cow)','Exhale: round upper back, drop chin to chest (cat)','Move only through upper/mid back — not lower back','10 slow reps'], safetyNote:'Keep movement gentle. Stop if tingling.', duration:'2 min', reps:'10 reps', svg:'seated', conditions:['spine','nerve','back'] },
+  { id:'wrist-circles', name:'Wrist Circles and Stretches', tags:['wrists','desk','hands'], goal:['flexibility'], symptoms:['wrist pain','wrist stiff','typing fatigue','carpal tunnel'], steps:['Extend arms in front','Make fists and rotate wrists clockwise 10 times','Rotate counter-clockwise 10 times','Then open hands wide and spread fingers for 5 seconds','Relax'], safetyNote:'Stop if pain or numbness in fingers.', duration:'2 min', reps:'10 each direction', svg:'seated', conditions:[] },
+  { id:'seated-chest-opener', name:'Seated Chest Opener', tags:['desk','chest','posture'], goal:['flexibility'], symptoms:['chest tight','hunched','desk fatigue'], steps:['Sit at edge of chair','Clasp hands behind your back','Straighten arms and gently squeeze shoulder blades together','Lift chest toward ceiling slightly','Hold 20 seconds'], safetyNote:'Do not arch neck backward.', duration:'2 min', reps:'5 reps', svg:'seated', conditions:['back','shoulder'] },
+  { id:'standing-desk-stretch', name:'Standing Desk Stretch', tags:['desk','full body','standing'], goal:['flexibility'], symptoms:['stiff after sitting','desk fatigue','need a break'], steps:['Stand up from your desk','Reach both arms overhead and interlace fingers','Stretch up and slightly back','Hold 10 seconds','Bring arms down. Shake out gently'], safetyNote:'Do not arch lower back excessively.', duration:'1 min', reps:'3 reps', svg:'standing', conditions:['back'] },
+  { id:'eye-relief', name:'Eye Relief and Neck Rest', tags:['desk','eyes','neck'], goal:['recovery'], symptoms:['eye strain','screen fatigue','headache','neck stiff'], steps:['Look away from screen at something 20+ feet away for 20 seconds','Then close eyes for 10 seconds','Slowly roll neck: ear to right shoulder, chin to chest, ear to left shoulder','Repeat 3 times'], safetyNote:'Take this break every 30–60 minutes of screen time.', duration:'2 min', reps:'Every hour', svg:'neck-rolls', conditions:['neck'] },
+
+  // ── STRENGTH ──
+  { id:'wall-push-up', name:'Wall Push-Up', tags:['chest','shoulders','arms','standing'], goal:['strength'], symptoms:['upper body weak','shoulder weak'], steps:['Stand arm length from a wall','Place hands on wall at shoulder height and width','Bend elbows slowly to bring chest toward wall','Push back to start'], safetyNote:'Keep body in a straight line. Do not let hips sag.', duration:'3 min', reps:'15 reps', svg:'standing', conditions:['shoulder','back'] },
+  { id:'squat', name:'Bodyweight Squat', tags:['legs','glutes','quads','standing'], goal:['strength'], symptoms:['legs weak','glute weak'], steps:['Stand feet shoulder-width, toes slightly out','Arms forward for balance','Push hips back and bend knees like sitting in a chair','Lower until thighs parallel to floor if possible','Drive through heels to stand'], safetyNote:'Keep knees tracking over toes. Stop if knee pain.', duration:'3 min', reps:'15 reps', svg:'squat', conditions:['acl','knee'] },
+  { id:'reverse-lunge', name:'Reverse Lunge', tags:['legs','glutes','standing'], goal:['strength'], symptoms:['legs weak','glute weak'], steps:['Stand tall, hands on hips or held out for balance','Step right foot back and lower knee toward floor','Front thigh parallel to floor, back knee just above floor','Push through front heel to return to start','Switch legs'], safetyNote:'ACL-safer than forward lunge. Keep front knee behind toes.', duration:'3 min', reps:'10 each side', svg:'hip-flexor', conditions:['acl','knee'] },
+  { id:'wall-sit', name:'Wall Sit', tags:['quads','knees','standing'], goal:['strength'], symptoms:['quad weak','knee rehab'], steps:['Stand with back flat against wall','Slide down until knees are at 90°','Feet flat, hip-width apart','Hold position. Breathe normally'], safetyNote:'Do not exceed 90° knee bend. Stop if knee pain.', duration:'30–60 sec', reps:'3 sets', svg:'squat', conditions:['acl','knee'] },
+  { id:'incline-push-up', name:'Incline Push-Up', tags:['chest','shoulders','arms'], goal:['strength'], symptoms:['upper body weak'], steps:['Place hands on a sturdy desk or countertop, shoulder width','Walk feet back — body in a straight line','Lower chest toward desk, elbows at 45°','Push back up'], safetyNote:'Keep body straight — do not let hips sag or raise.', duration:'3 min', reps:'12 reps', svg:'plank', conditions:['shoulder'] },
+  { id:'glute-bridge-march', name:'Glute Bridge March', tags:['glutes','core','floor'], goal:['strength'], symptoms:['glute weak','core weak','back instability'], steps:['Set up in glute bridge position, hips lifted','Keeping hips level, lift right foot 2 inches off floor','Hold 2 seconds. Lower. Lift left foot','Keep hips from dropping throughout'], safetyNote:'Master the basic glute bridge first.', duration:'3 min', reps:'10 each side', svg:'bridge', conditions:['back','acl'] },
+  { id:'step-ups', name:'Step-Ups', tags:['legs','glutes','stairs'], goal:['strength'], symptoms:['legs weak','balance poor'], steps:['Stand at bottom of a step or low sturdy surface','Step right foot up, drive through heel to stand on step','Bring left foot up','Step right foot back down, then left','Lead with same foot for 10 reps, then switch'], safetyNote:'Hold railing for safety. Do not exceed comfortable step height.', duration:'3 min', reps:'10 each side', svg:'standing', conditions:['acl','knee'] },
+
+  // ── CARDIO & WARMUP ──
+  { id:'marching', name:'Seated or Standing March', tags:['cardio','warmup','desk'], goal:['weight_loss','flexibility'], symptoms:['stiff','cold','need energy','morning stiffness'], steps:['Sit or stand tall','Lift right knee up while swinging left arm forward','Lower and switch sides','Keep rhythm — like marching in place','Increase speed gradually'], safetyNote:'Start slowly. Stop if dizzy.', duration:'3 min', reps:'30 seconds–2 min', svg:'standing', conditions:['acl','knee'] },
+  { id:'arm-circles', name:'Arm Circles', tags:['shoulders','warmup','desk'], goal:['flexibility'], symptoms:['shoulder stiff','cold muscles','need warmup'], steps:['Stand or sit with good posture','Extend arms out to sides at shoulder height','Make small circles forward for 10 reps','Make large circles forward for 10 reps','Reverse direction both sizes'], safetyNote:'Stop if shoulder pain.', duration:'2 min', reps:'10 small + 10 large each direction', svg:'standing', conditions:['shoulder'] },
+  { id:'jumping-jacks', name:'Modified Jumping Jacks', tags:['cardio','warmup'], goal:['weight_loss'], symptoms:['need energy','cold muscles'], steps:['Stand tall','Step right foot out while raising both arms overhead','Step foot back in, lower arms','Alternate sides quickly','Or do full jumping jacks if comfortable'], safetyNote:'Use step version if ACL or knee concerns. Low impact.', duration:'2 min', reps:'30 seconds', svg:'standing', conditions:['acl','knee'] },
+  { id:'high-knees', name:'High Knees (Low Impact)', tags:['cardio','warmup'], goal:['weight_loss'], symptoms:['need energy'], steps:['Stand tall','Lift right knee to hip height','Lower and lift left knee','Pump arms opposite to legs','Keep pace comfortable'], safetyNote:'Slow version is ACL-friendly. Stop if knee pain.', duration:'2 min', reps:'30 seconds', svg:'standing', conditions:['acl','knee'] },
+  { id:'walking', name:'Brisk Walk', tags:['cardio','outdoor','simple'], goal:['weight_loss'], symptoms:['need energy','stiff','mood low'], steps:['Put on comfortable shoes','Set a timer for your target time','Walk at a pace where you can talk but feel slightly breathless','Swing arms naturally','Cool down with 2 minutes slow walk at end'], safetyNote:'Start with 10 minutes and build up. Listen to your body.', duration:'10–30 min', reps:'Daily', svg:'standing', conditions:[] },
+
+  // ── NERVE & SPINE SPECIFIC ──
+  { id:'nerve-flossing', name:'Sciatic Nerve Floss', tags:['nerve','sciatic','floor'], goal:['recovery'], symptoms:['nerve pain','sciatica','leg tingling','shooting pain in leg'], steps:['Sit in chair, upright','Extend right leg straight, flex foot (toes up)','Then bend knee back down while looking up','Repeat in a smooth, gentle rhythm — not static hold'], safetyNote:'VERY gentle. Stop immediately if tingling or shooting pain increases.', duration:'2 min', reps:'10 reps each side', svg:'seated', conditions:['nerve','spine','sciatic'] },
+  { id:'prone-press-up', name:'Prone Press-Up (McKenzie)', tags:['spine','nerve','floor'], goal:['recovery'], symptoms:['lower back pain','nerve pain','disc pain'], steps:['Lie face down, hands under shoulders like a push-up','Keeping hips on floor, press up with arms to extend spine','Go only as far as comfortable — no pain','Hold 1–2 seconds at top. Lower'], safetyNote:'Hips must stay on floor. Stop if leg pain increases.', duration:'2 min', reps:'10 reps', svg:'plank', conditions:['spine','nerve','back'] },
+  { id:'lumbar-extension', name:'Standing Lumbar Extension', tags:['spine','standing','desk'], goal:['recovery'], symptoms:['lower back pain','stiff after sitting','back ache'], steps:['Stand with feet hip-width','Place hands on lower back, fingers pointing down','Gently arch backward, looking slightly up','Hold 2 seconds. Return to upright','Repeat'], safetyNote:'Small, controlled movement only. Stop if leg pain.', duration:'1 min', reps:'10 reps', svg:'standing', conditions:['spine','back','nerve'] },
+  { id:'spinal-decompression', name:'Spinal Decompression Hang', tags:['spine','decompression'], goal:['recovery'], symptoms:['back pain','spine tight','disc pain','compressed feeling'], steps:['Find a sturdy overhead bar or door frame','Hang with both hands, letting spine lengthen with gravity','Relax shoulders and let body hang','Hold 20–30 seconds'], safetyNote:'Do not do if shoulder injury. Come down slowly.', duration:'2 min', reps:'3 x 20 sec', svg:'standing', conditions:['back','spine','shoulder'] },
+
+  // ── BALANCE & PROPRIOCEPTION ──
+  { id:'single-leg-stand', name:'Single Leg Balance', tags:['balance','ankles','standing'], goal:['recovery','strength'], symptoms:['balance poor','ankle weak','acl recovery'], steps:['Stand near a wall for safety','Lift one foot slightly off floor','Balance on one leg — focus eyes on fixed point','Hold 20–30 seconds. Switch legs','Progress to eyes closed when confident'], safetyNote:'Always near a wall. Stop if knee pain.', duration:'3 min', reps:'3 x 30 sec each side', svg:'standing', conditions:['acl','knee'] },
+  { id:'heel-toe-walk', name:'Heel-to-Toe Walk', tags:['balance','ankles','standing'], goal:['recovery'], symptoms:['balance poor','ankle weak'], steps:['Stand at one end of a room','Place right heel directly in front of left toes','Step left heel directly in front of right toes','Walk in this straight line across the room','Turn and return'], safetyNote:'Arms out for balance. Walk near a wall.', duration:'2 min', reps:'4 lengths of room', svg:'standing', conditions:['acl','knee'] },
+  { id:'calf-raises', name:'Calf Raises', tags:['calves','ankles','standing'], goal:['strength'], symptoms:['calf weak','ankle weak','circulation'], steps:['Stand with feet hip-width, hold wall for balance','Rise up onto balls of feet as high as comfortable','Hold 1 second at top','Lower slowly'], safetyNote:'Controlled lowering is key. Do not drop.', duration:'3 min', reps:'20 reps', svg:'standing', conditions:['acl','knee'] },
+
+  // ── MORNING ROUTINE ──
+  { id:'morning-stretch-sequence', name:'Full Body Morning Stretch', tags:['morning','full body','floor'], goal:['flexibility'], symptoms:['morning stiffness','stiff all over','just woke up'], steps:['Lie on back — pull both knees to chest and rock gently (1 min)','Roll to side and sit up slowly','Cat-cow on all fours (10 reps)','Child\'s pose (45 seconds)','Seated forward fold (30 seconds)','Roll up slowly to standing'], safetyNote:'Move slowly in the morning. Never force cold muscles.', duration:'5 min', reps:'Once', svg:'knee-to-chest', conditions:['back','spine','nerve','acl'] },
+  { id:'sun-salutation-gentle', name:'Gentle Sun Salutation', tags:['morning','full body','yoga','floor'], goal:['flexibility'], symptoms:['morning stiffness','need energy','stiff'], steps:['Stand tall, hands at heart (Mountain pose)','Raise arms overhead on inhale','Fold forward gently on exhale (bent knees ok)','Step back to plank or hands-knees','Lower to floor gently','Press up to Cobra (gentle backbend)','Push back to Child\'s pose','Walk feet to hands, roll up to stand'], safetyNote:'Keep movements slow. Bend knees in forward fold. Skip Cobra if spine pain.', duration:'5 min', reps:'3 rounds', svg:'standing', conditions:['back','spine'] },
+
+  // ── RELAXATION & COOL DOWN ──
+  { id:'progressive-relaxation', name:'Progressive Muscle Relaxation', tags:['relaxation','stress','floor'], goal:['recovery'], symptoms:['stressed','tense','cant sleep','pain','anxious'], steps:['Lie on your back comfortably','Start at your feet: tense feet muscles for 5 seconds, release','Move to calves: tense and release','Continue up body: thighs, abs, hands, arms, shoulders, face','End with 5 deep breaths'], safetyNote:'Do not tense an area if it is injured.', duration:'10 min', reps:'Once', svg:'supine', conditions:['back','spine','acl'] },
+  { id:'savasana', name:'Savasana (Corpse Pose)', tags:['relaxation','floor','yoga'], goal:['recovery'], symptoms:['tired','stressed','need to rest','pain'], steps:['Lie flat on your back, arms slightly away from body','Let feet fall open naturally','Close eyes','Breathe normally and let body completely relax','Do nothing for 5 minutes'], safetyNote:'Place pillow under knees if lower back is uncomfortable.', duration:'5 min', reps:'Hold', svg:'supine', conditions:['back','spine','nerve','acl'] },
+  { id:'foam-roll-upper-back', name:'Upper Back Foam Roll', tags:['upper back','recovery','massage'], goal:['recovery'], symptoms:['upper back tight','knots','mid back pain'], steps:['Place foam roller horizontally under mid back','Support head with hands behind neck','Let upper back extend gently over roller','Shift roller up and down between shoulder blades','Pause on tender spots for 20–30 seconds'], safetyNote:'Never roll the lower back or neck. Stop if sharp pain.', duration:'3 min', reps:'2–3 min', svg:'supine', conditions:['back'] },
+
+  // ── ADDITIONAL COMMON EXERCISES ──
+  { id:'lunge-stretch', name:'Standing Lunge Stretch', tags:['hips','legs','standing'], goal:['flexibility'], symptoms:['hip tight','quad tight','lower back pain'], steps:['Take a large step forward with right foot','Lower back knee toward floor','Keep front knee over front ankle','Hold 30 seconds. Switch sides'], safetyNote:'Hold wall for balance. Keep spine upright.', duration:'3 min', reps:'3 each side', svg:'hip-flexor', conditions:['acl','knee'] },
+  { id:'seated-twist', name:'Seated Spinal Twist', tags:['spine','desk','rotation'], goal:['flexibility'], symptoms:['back stiff','spine stiff','desk fatigue'], steps:['Sit tall in chair','Cross right arm over to outside of left knee','Gently twist left, looking over left shoulder','Hold 20 seconds. Switch sides'], safetyNote:'Twist from upper back — not lower. Stop if back pain.', duration:'2 min', reps:'3 each side', svg:'seated', conditions:['spine','back'] },
+  { id:'supine-hamstring', name:'Supine Hamstring Stretch', tags:['hamstrings','floor','back'], goal:['flexibility'], symptoms:['hamstring tight','back of thigh tight','lower back pain'], steps:['Lie on back, both knees bent','Loop strap or towel around right foot','Gently straighten right leg toward ceiling','Hold 30 seconds. Switch sides'], safetyNote:'Slight bend in knee is fine. Do not force the leg straight.', duration:'3 min', reps:'3 each side', svg:'legs-up-wall', conditions:['acl','knee','back'] },
+  { id:'table-top-balance', name:'Table Top Balance', tags:['core','balance','floor'], goal:['strength'], symptoms:['core weak','back weak'], steps:['Start on hands and knees','Extend right arm and left leg simultaneously','Hold perfectly level for 5 seconds','Return to start. Switch sides'], safetyNote:'Keep hips level. Imagine balancing a glass of water on your back.', duration:'3 min', reps:'10 each side', svg:'cat-cow', conditions:['back','spine'] },
+  { id:'t-spine-foam-roll', name:'T-Spine Mobility with Towel', tags:['upper back','mobility'], goal:['flexibility'], symptoms:['upper back stiff','thoracic stiff'], steps:['Roll a towel into a cylinder','Lie on back, place rolled towel horizontally under mid back','Support head with hands','Let upper back gently extend over towel','Breathe and relax for 1 minute'], safetyNote:'Do not place under lower back or neck.', duration:'3 min', reps:'Hold 1 min, move towel up slightly, repeat', svg:'supine', conditions:['back'] },
+  { id:'seated-neck-retraction', name:'Seated Neck Retraction', tags:['neck','posture','desk'], goal:['recovery'], symptoms:['neck pain','forward head','screen fatigue'], steps:['Sit tall','Without tilting head, pull chin straight back','Feel the back of neck lengthen','Hold 3 seconds. Release','Repeat'], safetyNote:'Very small movement — only 1-2 cm. Never tilt head down.', duration:'2 min', reps:'10 reps', svg:'seated', conditions:['neck','spine'] },
+  { id:'hip-90-90', name:'Hip 90-90 Stretch', tags:['hips','rotation','floor'], goal:['flexibility'], symptoms:['hip tight','hip rotation stiff'], steps:['Sit on floor, right knee bent at 90° in front, left knee bent at 90° to side','Sit tall — do not collapse to one side','Hold 60 seconds','Gently switch sides'], safetyNote:'Place folded blanket under hips if uncomfortable.', duration:'4 min', reps:'3 each side', svg:'supine', conditions:['hip','acl'] },
+  { id:'standing-hip-abduction', name:'Standing Hip Abduction', tags:['hips','glutes','standing'], goal:['strength'], symptoms:['hip weak','knee pain','acl recovery'], steps:['Stand near wall, hold for balance','Lift right leg straight out to the side — keep toes forward','Hold 2 seconds at top','Lower slowly. Repeat 15 times. Switch sides'], safetyNote:'Keep standing leg slightly bent. Do not tilt pelvis.', duration:'3 min', reps:'15 each side', svg:'standing', conditions:['acl','hip','knee'] },
+  { id:'prone-hip-extension', name:'Prone Hip Extension', tags:['glutes','back','floor'], goal:['strength'], symptoms:['glute weak','lower back pain'], steps:['Lie face down, forehead on hands','Squeeze right glute and lift right leg 6 inches off floor','Hold 2 seconds. Lower slowly','Repeat 15 times. Switch sides'], safetyNote:'Keep pelvis on floor. Do not rotate hips.', duration:'3 min', reps:'15 each side', svg:'supine', conditions:['back','acl'] },
+  { id:'towel-scrunches', name:'Toe and Foot Exercises', tags:['feet','ankles','floor'], goal:['recovery'], symptoms:['foot pain','plantar fasciitis','ankle weak'], steps:['Sit in chair, bare feet on floor','Place a small towel on floor under feet','Use toes to scrunch the towel toward you','Spread toes out wide, hold 5 seconds','Release'], safetyNote:'Gentle only. Stop if cramping.', duration:'2 min', reps:'10 reps each foot', svg:'seated', conditions:['acl','knee'] }
+];
+
+// ═══════════════════════════════════════════════════════
+// SYMPTOM → EXERCISE MAPPING
+// ═══════════════════════════════════════════════════════
+const SYMPTOM_MAP = {
+  // Body sensations
+  'back pain':          ['cat-cow','knee-to-chest','spinal-twist','pelvic-tilt','child-pose','diaphragmatic-breathing'],
+  'lower back pain':    ['cat-cow','knee-to-chest','pelvic-tilt','spinal-twist','hip-flexor-stretch','child-pose'],
+  'upper back':         ['thoracic-rotation','chest-opener','shoulder-rolls','wall-angels','thread-needle','seated-chest-opener'],
+  'neck':               ['neck-rolls','ear-to-shoulder-stretch','chin-tucks','neck-side-stretch','eye-relief'],
+  'shoulder':           ['shoulder-rolls','chest-opener','wall-angels','arm-circles','doorway-chest-stretch'],
+  'hip':                ['hip-flexor-stretch','figure-4-stretch','seated-hip-stretch','hip-circles','butterfly-stretch'],
+  'knee':               ['ankle-pumps','straight-leg-raise','heel-slides','terminal-knee-extension','wall-slide'],
+  'nerve':              ['diaphragmatic-breathing','legs-up-wall','nerve-flossing','prone-press-up','pelvic-tilt'],
+  'tingling':           ['diaphragmatic-breathing','pelvic-tilt','legs-up-wall','box-breathing'],
+  'spine':              ['cat-cow','seated-spinal-breathing','pelvic-tilt','spinal-twist','prone-press-up'],
+  'hamstring':          ['supine-hamstring','hamstring-stretch-floor','legs-up-wall'],
+  'chest tight':        ['chest-opener','doorway-chest-stretch','seated-chest-opener','box-breathing'],
+  // Feelings & situations
+  'stiff':              ['cat-cow','morning-stretch-sequence','thoracic-rotation','neck-rolls','shoulder-rolls'],
+  'morning':            ['morning-stretch-sequence','cat-cow','child-pose','diaphragmatic-breathing','spinal-twist'],
+  'desk':               ['seated-spinal-breathing','neck-rolls','shoulder-rolls','eye-relief','wrist-circles','seated-cat-cow'],
+  'tired':              ['legs-up-wall','diaphragmatic-breathing','savasana','box-breathing'],
+  'stressed':           ['4-7-8-breathing','progressive-relaxation','savasana','box-breathing','diaphragmatic-breathing'],
+  'energy':             ['marching','arm-circles','sun-salutation-gentle','walking','jumping-jacks'],
+  'sitting too long':   ['seated-spinal-breathing','hip-flexor-stretch','seated-cat-cow','standing-desk-stretch','lumbar-extension'],
+  'posture':            ['chin-tucks','wall-angels','chest-opener','thoracic-extension','seated-chest-opener'],
+  // Goals
+  'flexibility':        ['cat-cow','hip-flexor-stretch','spinal-twist','child-pose','chest-opener','butterfly-stretch'],
+  'strength':           ['glute-bridge','plank','squat','bird-dog','dead-bug','wall-push-up'],
+  'recovery':           ['diaphragmatic-breathing','ankle-pumps','straight-leg-raise','legs-up-wall','progressive-relaxation'],
+  'weight loss':        ['marching','walking','jumping-jacks','high-knees','squat','step-ups'],
+  // Health conditions
+  'acl':                ['ankle-pumps','straight-leg-raise','heel-slides','clamshell','standing-hip-abduction','single-leg-stand'],
+  'sciatica':           ['nerve-flossing','pelvic-tilt','knee-to-chest','diaphragmatic-breathing','legs-up-wall'],
+  'plantar':            ['towel-scrunches','calf-raises','ankle-pumps'],
+};
+
+// ─── Look up exercises by symptom text ───
+function getExercisesBySymptom(symptomText) {
+  const text = (symptomText || '').toLowerCase();
+  let ids = new Set();
+  for (const [key, exIds] of Object.entries(SYMPTOM_MAP)) {
+    if (text.includes(key)) exIds.forEach(id => ids.add(id));
+  }
+  return [...ids].map(id => EXERCISE_LIBRARY.find(e => e.id === id)).filter(Boolean);
+}
+
+// ─── Get exercises for a user profile (onboarding curation) ───
+function getExercisesForProfile(profile) {
+  if (!profile) return EXERCISE_LIBRARY.slice(0, 8);
+  const goal = profile.goal || 'flexibility';
+  const notes = (profile.health_notes || '').toLowerCase();
+  const duration = parseInt(profile.duration) || 20;
+
+  // Filter by goal
+  let pool = EXERCISE_LIBRARY.filter(e => e.goal.includes(goal));
+
+  // Prioritise condition-specific exercises
+  if (notes) {
+    const conditionMatches = EXERCISE_LIBRARY.filter(e =>
+      e.conditions.some(c => notes.includes(c))
+    );
+    // Merge — condition matches first, then goal matches
+    const merged = [...conditionMatches];
+    pool.forEach(e => { if (!merged.find(m => m.id === e.id)) merged.push(e); });
+    pool = merged;
+  }
+
+  // Trim to fit duration (roughly 3–4 min per exercise)
+  const maxExercises = Math.min(Math.floor(duration / 3), 10);
+  return pool.slice(0, maxExercises);
+}
+
+// ─── Find a library exercise by name (for chat card matching) ───
+function findExerciseByName(name) {
+  const n = (name || '').toLowerCase().trim();
+  return EXERCISE_LIBRARY.find(e =>
+    e.name.toLowerCase() === n ||
+    e.name.toLowerCase().includes(n) ||
+    n.includes(e.name.toLowerCase()) ||
+    e.id === n.replace(/\s+/g, '-')
+  );
+}
+
+// ─── YouTube URL builder ───
+function youtubeURL(exerciseName) {
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(exerciseName + ' exercise tutorial how to')}`;
+}
+
+// ═══════════════════════════════════════════════════════
+// CARD RENDERING
+// ═══════════════════════════════════════════════════════
 
 // ─── Parse Claude's numbered list into structured objects ───
 function parseExerciseResponse(text) {
@@ -404,74 +293,72 @@ function parseExerciseResponse(text) {
   return exercises;
 }
 
-// ─── Render exercise objects → visual card DOM (async, supports dynamic SVG generation) ───
+// ─── Render a single exercise into a rich card ───
+function renderOneCard(ex, index, libEntry) {
+  const card = document.createElement('div');
+  card.className = 'ex-card';
+  const yt = youtubeURL(ex.name);
+  const steps = libEntry ? libEntry.steps : (ex.details || []);
+  const note = libEntry ? libEntry.safetyNote : ex.note;
+  const duration = libEntry ? `${libEntry.duration} · ${libEntry.reps}` : '';
+  const stepsHTML = steps.length ? `
+    <div class="ex-steps-toggle" onclick="toggleSteps(this)">
+      <span>How to do it</span><span class="ex-toggle-icon">▾</span>
+    </div>
+    <ol class="ex-steps hidden">
+      ${steps.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+    </ol>` : '';
+
+  card.innerHTML = `
+    <div class="ex-card-num">${index + 1}</div>
+    <div class="ex-card-art" aria-hidden="true">${getExerciseSVG(ex.name)}</div>
+    <div class="ex-card-body">
+      <div class="ex-card-title">
+        ${escapeHtml(ex.name)}
+        <a class="ex-yt-link" href="${yt}" target="_blank" rel="noopener" title="Watch on YouTube">▶</a>
+      </div>
+      ${duration ? `<div class="ex-card-meta">${escapeHtml(duration)}</div>` : ''}
+      ${ex.details && ex.details.length && !libEntry ? `<div class="ex-card-detail">${escapeHtml(ex.details.slice(0,2).join(' · '))}</div>` : ''}
+      ${note ? `<div class="ex-card-note">⚠ ${escapeHtml(note)}</div>` : ''}
+      ${stepsHTML}
+    </div>
+  `;
+  return card;
+}
+
+// ─── Render exercise list → visual cards ───
 function renderExerciseCards(exercises) {
   if (!exercises || exercises.length === 0) return null;
   const wrap = document.createElement('div');
   wrap.className = 'ex-card-list';
-
   exercises.forEach((ex, i) => {
-    const card = document.createElement('div');
-    card.className = 'ex-card';
-
-    // Placeholder SVG shown while generating (spinning dots)
-    const placeholderSVG = `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="32" cy="40" r="4" fill="#333"><animate attributeName="opacity" values="0.2;1;0.2" dur="1.2s" begin="0s" repeatCount="indefinite"/></circle>
-      <circle cx="40" cy="40" r="4" fill="#333"><animate attributeName="opacity" values="0.2;1;0.2" dur="1.2s" begin="0.2s" repeatCount="indefinite"/></circle>
-      <circle cx="48" cy="40" r="4" fill="#333"><animate attributeName="opacity" values="0.2;1;0.2" dur="1.2s" begin="0.4s" repeatCount="indefinite"/></circle>
-    </svg>`;
-
-    card.innerHTML = `
-      <div class="ex-card-num">${i + 1}</div>
-      <div class="ex-card-art" id="ex-art-${i}" aria-hidden="true">${placeholderSVG}</div>
-      <div class="ex-card-body">
-        <div class="ex-card-title">${escapeHtml(ex.name)}</div>
-        ${ex.details.length ? `<div class="ex-card-detail">${escapeHtml(ex.details.slice(0, 2).join(' · '))}</div>` : ''}
-        ${ex.note ? `<div class="ex-card-note">⚠ ${escapeHtml(ex.note)}</div>` : ''}
-      </div>
-    `;
-    wrap.appendChild(card);
-
-    // Resolve SVG — instant for known exercises, async API call for new ones
-    getExerciseSVGAsync(ex.name).then(svg => {
-      const artEl = card.querySelector('.ex-card-art');
-      if (artEl) artEl.innerHTML = svg;
-    });
+    const libEntry = findExerciseByName(ex.name);
+    wrap.appendChild(renderOneCard(ex, i, libEntry));
   });
-
   return wrap;
 }
 
-// ─── Build a Google Images search URL for any exercise ───
-function googleImagesURL(exerciseName) {
-  const query = encodeURIComponent(exerciseName + ' exercise how to');
-  return `https://www.google.com/search?q=${query}&tbm=isch`;
-}
-
-// ─── Render exercise objects → visual card DOM ───
-function renderExerciseCards(exercises) {
-  if (!exercises || exercises.length === 0) return null;
+// ─── Render library exercises directly (for session view) ───
+function renderLibraryCards(libExercises) {
+  if (!libExercises || libExercises.length === 0) return null;
   const wrap = document.createElement('div');
   wrap.className = 'ex-card-list';
-
-  exercises.forEach((ex, i) => {
-    const card = document.createElement('div');
-    card.className = 'ex-card';
-    const searchURL = googleImagesURL(ex.name);
-    card.innerHTML = `
-      <div class="ex-card-num">${i + 1}</div>
-      <div class="ex-card-art" aria-hidden="true">${getExerciseSVG(ex.name)}</div>
-      <div class="ex-card-body">
-        <div class="ex-card-title">
-          ${escapeHtml(ex.name)}
-          <a class="ex-img-link" href="${searchURL}" target="_blank" rel="noopener" title="See photos">📷</a>
-        </div>
-        ${ex.details.length ? `<div class="ex-card-detail">${escapeHtml(ex.details.slice(0, 2).join(' · '))}</div>` : ''}
-        ${ex.note ? `<div class="ex-card-note">⚠ ${escapeHtml(ex.note)}</div>` : ''}
-      </div>
-    `;
-    wrap.appendChild(card);
+  libExercises.forEach((ex, i) => {
+    const chatEx = { name: ex.name, details: [], note: null };
+    wrap.appendChild(renderOneCard(chatEx, i, ex));
   });
-
   return wrap;
+}
+
+// ─── Toggle steps expand/collapse ───
+function toggleSteps(el) {
+  const steps = el.nextElementSibling;
+  const icon = el.querySelector('.ex-toggle-icon');
+  if (steps.classList.contains('hidden')) {
+    steps.classList.remove('hidden');
+    icon.textContent = '▴';
+  } else {
+    steps.classList.add('hidden');
+    icon.textContent = '▾';
+  }
 }
