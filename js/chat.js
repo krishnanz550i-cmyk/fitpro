@@ -48,19 +48,29 @@ function stripMarkdown(text) {
 }
 
 // ─── Main Claude API call via Supabase Edge Function ───
-async function callClaude(messages, systemOverride = null) {
+// Retries once automatically on failure (handles cold start / shutdown)
+async function callClaude(messages, systemOverride = null, attempt = 1) {
   const system = systemOverride || buildSystemPrompt(currentProfile);
-  const response = await fetch(CONFIG.EDGE_FUNCTION_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages, system })
-  });
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err.error || `API error ${response.status}`);
+  try {
+    const response = await fetch(CONFIG.EDGE_FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, system })
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error || `API error ${response.status}`);
+    }
+    const data = await response.json();
+    return data.content?.[0]?.text || data.text || '';
+  } catch (e) {
+    // Auto-retry once after 2s — handles Edge Function cold start / shutdown
+    if (attempt === 1) {
+      await new Promise(r => setTimeout(r, 2000));
+      return callClaude(messages, systemOverride, 2);
+    }
+    throw e;
   }
-  const data = await response.json();
-  return data.content?.[0]?.text || data.text || '';
 }
 
 // ─── Detect if a response contains an exercise list ───
@@ -107,12 +117,43 @@ async function sendMessage(text, fromUser = true) {
   } catch (e) {
     removeTyping(typingId);
     let errMsg = 'Sorry, I could not connect right now.';
-    if (e.message?.includes('Edge Function')) errMsg = 'Edge Function not deployed yet. See setup guide.';
-    else if (e.message?.includes('401')) errMsg = 'API key issue. Check your Supabase Edge Function.';
-    appendMsg('assistant', errMsg);
+    if (e.message?.includes('Edge Function') || e.message?.includes('not deployed')) {
+      errMsg = 'Edge Function not deployed yet. See setup guide.';
+    } else if (e.message?.includes('401')) {
+      errMsg = 'API key issue. Check your Supabase Edge Function.';
+    } else if (e.message?.includes('Failed to fetch') || e.message?.includes('NetworkError')) {
+      errMsg = 'Network error — check your connection and try again.';
+    }
+    // Show error with a retry button
+    const container = document.getElementById('chat-messages');
+    const div = document.createElement('div');
+    div.className = 'msg assistant';
+    div.innerHTML = `
+      <div class="msg-bubble msg-error">
+        ${escapeHtml(errMsg)}
+        <button class="retry-btn" onclick="retryLastMessage()">↺ Retry</button>
+      </div>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
   }
 
   isStreaming = false;
+}
+
+// ─── Retry last user message ───
+function retryLastMessage() {
+  // Find the last user message in history
+  const lastUser = [...chatHistory].reverse().find(m => m.role === 'user');
+  if (!lastUser) return;
+  // Remove the error bubble
+  const container = document.getElementById('chat-messages');
+  const lastMsg = container.lastElementChild;
+  if (lastMsg) lastMsg.remove();
+  // Remove last user entry from history to avoid duplication
+  const idx = chatHistory.lastIndexOf(lastUser);
+  chatHistory.splice(idx, 1);
+  // Resend
+  sendMessage(lastUser.content, false);
 }
 
 // ─── Send from input box ───
