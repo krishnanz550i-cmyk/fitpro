@@ -12,10 +12,10 @@ const CONFIG = {
 
   // App unlock password (hashed in localStorage after first set)
   // Change this to your own password
-  APP_PASSWORD: 'REPLACE_YOUR_APP_PASSWORD_HERE',
+  APP_PASSWORD: 'krishnanz550i@2026',
 
   // Admin username (email used during signup)
-  ADMIN_EMAIL: 'REPLACE_YOUR_ADMIN_EMAIL_HERE',
+  ADMIN_EMAIL: 'krishnanz550i@gmail.com',
 
   // Supabase Edge Function URL for Claude API calls
   // After deploying the edge function, paste its URL here
