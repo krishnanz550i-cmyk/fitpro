@@ -277,6 +277,9 @@
       <!-- CHAT VIEW -->
       <div class="view" id="view-chat">
         <div class="chat-layout">
+          <div class="chat-toolbar">
+            <button class="clear-chat-btn" onclick="clearChat()" title="Clear chat">🗑 Clear chat</button>
+          </div>
           <div class="chat-messages" id="chat-messages">
             <div class="chat-welcome">
               <div class="chat-welcome-logo">F</div>
@@ -498,7 +501,6 @@
 <div id="toast" class="toast"></div>
 
 <script src="js/config.js"></script>
-<script src="js/exercises.js"></script>
 <script src="js/supabase.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/app.js"></script>
