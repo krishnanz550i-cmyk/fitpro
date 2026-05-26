@@ -1,12 +1,9 @@
-// ─── State ───
 let currentUser = null;
 let currentProfile = null;
 
-// ─── Lock Screen ───
 function unlockApp() {
   const input = document.getElementById('lock-password').value;
   const err = document.getElementById('lock-error');
-  // Allow custom password set via admin, fallback to config
   const stored = localStorage.getItem('fp_app_password') || CONFIG.APP_PASSWORD;
   if (input === stored) {
     localStorage.setItem('fp_unlocked', '1');
@@ -22,7 +19,6 @@ document.getElementById('lock-password').addEventListener('keydown', e => {
   if (e.key === 'Enter') unlockApp();
 });
 
-// ─── Auth Tab Toggle ───
 function switchAuthTab(tab) {
   document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
@@ -30,7 +26,6 @@ function switchAuthTab(tab) {
   document.getElementById(`auth-${tab}`).classList.add('active');
 }
 
-// ─── Sign Up ───
 async function signupUser() {
   const name = document.getElementById('signup-name').value.trim();
   const email = document.getElementById('signup-email').value.trim();
@@ -41,7 +36,7 @@ async function signupUser() {
   if (password.length < 8) { err.textContent = 'Password must be at least 8 characters.'; return; }
   showLoading(true);
   try {
-    const sb = await initSupabase();
+    const sb = initSupabase();
     const { data, error } = await sb.auth.signUp({ email, password });
     if (error) throw error;
     const userId = data.user.id;
@@ -56,7 +51,6 @@ async function signupUser() {
   showLoading(false);
 }
 
-// ─── Login ───
 async function loginUser() {
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
@@ -65,7 +59,7 @@ async function loginUser() {
   if (!email || !password) { err.textContent = 'Please enter email and password.'; return; }
   showLoading(true);
   try {
-    const sb = await initSupabase();
+    const sb = initSupabase();
     const { data, error } = await sb.auth.signInWithPassword({ email, password });
     if (error) throw error;
     currentUser = data.user;
@@ -86,10 +80,9 @@ async function loginUser() {
   showLoading(false);
 }
 
-// ─── Logout ───
 async function logoutUser() {
   showLoading(true);
-  const sb = await initSupabase();
+  const sb = initSupabase();
   await sb.auth.signOut();
   currentUser = null;
   currentProfile = null;
@@ -99,13 +92,12 @@ async function logoutUser() {
   showLoading(false);
 }
 
-// ─── Session restore ───
 async function tryRestoreSession() {
   showLoading(true);
   const unlocked = localStorage.getItem('fp_unlocked');
   if (!unlocked) { showScreen('lock-screen'); showLoading(false); return; }
   try {
-    const sb = await initSupabase();
+    const sb = initSupabase();
     const { data } = await sb.auth.getSession();
     if (data?.session?.user) {
       currentUser = data.session.user;
@@ -124,7 +116,6 @@ async function tryRestoreSession() {
   showLoading(false);
 }
 
-// ─── Helpers ───
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -141,5 +132,4 @@ function showToast(msg, duration = 2500) {
   setTimeout(() => t.classList.remove('show'), duration);
 }
 
-// Start
 window.addEventListener('load', tryRestoreSession);
