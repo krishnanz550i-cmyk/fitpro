@@ -299,6 +299,19 @@ body {
   transition: border-color 0.2s;
 }
 .chat-input-row textarea:focus { border-color: #555; }
+.msg-error {
+  color: #bf6a6a !important;
+  border-color: #4a2a2a !important;
+  background: #1e1414 !important;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.retry-btn {
+  background: none; border: 1px solid #4a2a2a; color: #bf6a6a;
+  padding: 5px 12px; border-radius: 8px; font-size: 12px;
+  font-family: inherit; cursor: pointer; align-self: flex-start;
+  transition: all 0.15s;
+}
+.retry-btn:hover { background: #2a1a1a; border-color: #bf6a6a; }
 .send-btn {
   width: 40px; height: 40px; border-radius: 10px; background: #f0ede8; color: #0a0a0a;
   border: none; cursor: pointer; font-size: 16px; display: flex;
@@ -362,6 +375,11 @@ body {
 .ex-card-title { font-size: 13px; font-weight: 500; color: #f0ede8; margin-bottom: 2px; }
 .ex-card-detail { font-size: 11px; color: #666; }
 .ex-card-note { font-size: 11px; color: #c9a84c; margin-top: 3px; }
+.ex-img-link {
+  font-size: 13px; margin-left: 6px; text-decoration: none;
+  opacity: 0.5; transition: opacity 0.15s; vertical-align: middle;
+}
+.ex-img-link:hover { opacity: 1; }
 .msg-intro {
   margin-bottom: 8px; border-radius: 14px 14px 4px 14px;
   background: #1a1a1a; border: 1px solid #2a2a2a;
