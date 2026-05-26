@@ -78,8 +78,6 @@ async function launchApp() {
   initTopbar();
   renderSidebar();
   await switchView('today');
-  // Pre-warm Edge Function in background so first chat message is instant
-  if (window.warmupEdgeFunction) setTimeout(window.warmupEdgeFunction, 1000);
   if (currentProfile?.is_admin) {
     document.getElementById('admin-nav').style.display = 'flex';
   }
@@ -231,45 +229,16 @@ async function renderSession() {
 
   const durMap = { '10': '10–15', '20': '20–30', '45': '30–45', '60': '45–60' };
   document.getElementById('session-meta').textContent =
-    `${durMap[p.duration] || '20–30'} min • Adapted for your profile`;
+    `${durMap[p.duration] || '20–30'} min • Curated for your profile`;
 
-  // Generate exercises based on profile
-  const exercises = getExercisePlan(p);
+  // Use the local exercise library — zero tokens, instant
+  const exercises = getExercisesForProfile(p);
   const list = document.getElementById('exercise-list');
-  list.innerHTML = exercises.map((ex, i) => `
-    <div class="exercise-item">
-      <div class="ex-num">${i + 1}</div>
-      <div class="ex-body">
-        <div class="ex-title">${ex.name}</div>
-        <div class="ex-detail">${ex.detail}</div>
-        ${ex.note ? `<div class="ex-note">${ex.note}</div>` : ''}
-      </div>
-    </div>
-  `).join('');
+  list.innerHTML = '';
+  const cards = renderLibraryCards(exercises);
+  if (cards) list.appendChild(cards);
 }
 
-function getExercisePlan(profile) {
-  const hasSpine = profile.health_notes && /spine|nerve|compression/i.test(profile.health_notes);
-  const hasACL = profile.health_notes && /acl|knee/i.test(profile.health_notes);
-  const hasBack = profile.health_notes && /back/i.test(profile.health_notes);
-
-  const base = [
-    { name: 'Diaphragmatic breathing', detail: '5 slow breaths · lying flat · 2 min', note: hasSpine ? 'Gently activates deep core. Supports spinal stability.' : null },
-    { name: 'Cat-cow stretch', detail: '8 reps · on all fours · slow breath · 2 min', note: hasSpine ? 'Safe for nerve compression. Keeps spine mobile.' : null },
-    { name: 'Supine knee-to-chest', detail: '30 sec hold × 2 each side · lying on back · 3 min', note: hasACL ? 'Keep knee bend gentle. Stop if knee discomfort.' : null },
-    { name: 'Thoracic rotation', detail: '10 reps each side · lying on back · 3 min', note: hasBack ? 'Upper back mobility. Minimal spinal load.' : null },
-    { name: 'Doorframe chest opener', detail: '30 sec hold × 3 · elbows at 90° · 3 min', note: hasBack ? 'Counteracts desk posture. Gentle thoracic stretch.' : null },
-    { name: 'Legs-up-the-wall', detail: 'Hold 3–5 min · near a wall · hamstring stretch', note: hasACL ? 'ACL-safe. Reduces knee inflammation if present.' : null },
-    { name: 'Supported child\'s pose', detail: '45 sec × 3 · pillow under hips if needed · 3 min', note: hasSpine ? 'Decompresses lumbar. Avoid if tingling increases.' : null },
-    { name: 'Seated neck rolls', detail: '5 reps each direction · sitting tall · 2 min', note: null },
-  ];
-
-  // Trim to fit duration
-  const dur = parseInt(profile.duration) || 20;
-  if (dur <= 15) return base.slice(0, 4);
-  if (dur <= 30) return base.slice(0, 6);
-  return base;
-}
 
 // ─── Check-in View ───
 const bodyAreas = [
