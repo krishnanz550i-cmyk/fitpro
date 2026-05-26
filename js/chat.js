@@ -18,6 +18,8 @@ TONE RULES — always follow:
 - Be a supportive coach, not a drill sergeant
 - NEVER tell the user to search Google or YouTube — the app already shows image links automatically
 
+EXERCISE LIBRARY: The app has 100 pre-built exercises with full instructions and YouTube links already shown to the user in cards. When you name an exercise, the app automatically shows the card. So keep exercise descriptions short — just name and one safety note if needed. Do not re-explain steps the card already shows.
+
 CRITICAL FORMAT RULES — you MUST follow these exactly, no exceptions:
 1. NEVER use # headers or ## headers. Never.
 2. NEVER use **bold** or *italic* markdown.
@@ -53,7 +55,7 @@ function stripMarkdown(text) {
 async function callClaude(messages, systemOverride = null, attempt = 1) {
   const system = systemOverride || buildSystemPrompt(currentProfile);
   const MAX_ATTEMPTS = 3;
-  const DELAYS = [0, 4000, 6000]; // ms to wait before each attempt
+  const DELAYS = [0, 6000, 10000]; // ms to wait before each attempt (handles slow cold starts)
 
   try {
     if (DELAYS[attempt - 1]) {
@@ -90,6 +92,13 @@ function isExerciseResponse(text) {
   return false;
 }
 
+// ─── Check if message is a pure symptom query answerable from library ───
+function trySymptomMatch(text) {
+  const exercises = getExercisesBySymptom(text);
+  if (exercises.length >= 2) return exercises.slice(0, 5);
+  return null;
+}
+
 // ─── Send a message ───
 async function sendMessage(text, fromUser = true) {
   if (isStreaming) return;
@@ -99,11 +108,29 @@ async function sendMessage(text, fromUser = true) {
   chatHistory.push({ role: 'user', content: text });
   if (currentUser) saveChatMessage(currentUser.id, 'user', text).catch(() => {});
 
+  // ── Try local symptom match first — no API call needed ──
+  const symptomMatches = trySymptomMatch(text);
+  if (symptomMatches && symptomMatches.length > 0) {
+    const typingId = showTyping();
+    await new Promise(r => setTimeout(r, 600)); // brief pause feels natural
+    removeTyping(typingId);
+    // Show a short intro message then the cards
+    const introMsg = `Here are some exercises that may help. Tap "How to do it" on any card for step-by-step instructions, or the ▶ button to watch on YouTube.`;
+    appendMsg('assistant', introMsg);
+    const chatEx = symptomMatches.map(e => ({ name: e.name, details: [], note: null }));
+    const symText = symptomMatches.map((e,i) => (i+1) + '. ' + e.name + '\n   ' + e.duration + ' · ' + e.reps).join('\n');
+    appendExerciseMsg(symText);
+    chatHistory.push({ role: 'assistant', content: introMsg });
+    if (currentUser) saveChatMessage(currentUser.id, 'assistant', introMsg).catch(() => {});
+    isStreaming = false;
+    return;
+  }
+
   const typingId = showTyping();
   isStreaming = true;
 
   try {
-    // Token efficiency: keep last 8 messages (4 exchanges) not 12
+    // Token efficiency: keep last 8 messages (4 exchanges)
     const contextHistory = chatHistory.slice(-9, -1);
     const rawReply = await callClaude(contextHistory.concat([{ role: 'user', content: text }]));
     const reply = stripMarkdown(rawReply);
