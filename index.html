@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FitPro">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="manifest" href="manifest.json">
+<title>FitPro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- LOCK SCREEN -->
+<div id="lock-screen" class="screen active">
+  <div class="lock-bg"></div>
+  <div class="lock-content">
+    <div class="lock-logo">
+      <div class="logo-mark">F</div>
+      <div class="logo-text">FitPro</div>
+    </div>
+    <div class="lock-tagline">Your personal trainer, always on.</div>
+    <div class="lock-form">
+      <input type="password" id="lock-password" placeholder="Enter app password" autocomplete="off">
+      <button onclick="unlockApp()">Unlock</button>
+    </div>
+    <div id="lock-error" class="error-msg"></div>
+  </div>
+</div>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen" class="screen">
+  <div class="auth-split">
+    <div class="auth-left">
+      <div class="auth-logo">
+        <div class="logo-mark">F</div>
+        <span>FitPro</span>
+      </div>
+      <div class="auth-hero">
+        <h1>Your body,<br><em>your rhythm.</em></h1>
+        <p>A personal trainer that adapts to your conditions, your schedule, and your day.</p>
+      </div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" onclick="switchAuthTab('login')">Sign in</button>
+          <button class="auth-tab" onclick="switchAuthTab('signup')">Create account</button>
+        </div>
+        <div id="auth-login" class="auth-panel active">
+          <input type="email" id="login-email" placeholder="Email address">
+          <input type="password" id="login-password" placeholder="Password">
+          <button class="btn-full" onclick="loginUser()">Sign in</button>
+          <div id="login-error" class="error-msg"></div>
+        </div>
+        <div id="auth-signup" class="auth-panel">
+          <input type="text" id="signup-name" placeholder="Your name">
+          <input type="email" id="signup-email" placeholder="Email address">
+          <input type="password" id="signup-password" placeholder="Password (min 8 chars)">
+          <button class="btn-full" onclick="signupUser()">Create account</button>
+          <div id="signup-error" class="error-msg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ONBOARDING SCREEN -->
+<div id="onboarding-screen" class="screen">
+  <div class="onboarding-wrap">
+    <div class="onboarding-header">
+      <div class="logo-mark small">F</div>
+      <span>Let's set up your profile</span>
+    </div>
+    <div class="onboarding-steps">
+      <div class="step active" id="step-1">
+        <h2>What's your main goal?</h2>
+        <div class="choice-grid">
+          <div class="choice-card" onclick="selectChoice(this,'goal','flexibility')">
+            <div class="choice-icon">🧘</div>
+            <div class="choice-label">Flexibility & mobility</div>
+            <div class="choice-sub">Yoga, stretching, posture</div>
+          </div>
+          <div class="choice-card" onclick="selectChoice(this,'goal','strength')">
+            <div class="choice-icon">💪</div>
+            <div class="choice-label">Strength & muscle</div>
+            <div class="choice-sub">Bodyweight, resistance</div>
+          </div>
+          <div class="choice-card" onclick="selectChoice(this,'goal','weight_loss')">
+            <div class="choice-icon">🔥</div>
+            <div class="choice-label">Weight loss & cardio</div>
+            <div class="choice-sub">Fat burn, endurance</div>
+          </div>
+          <div class="choice-card" onclick="selectChoice(this,'goal','recovery')">
+            <div class="choice-icon">🩺</div>
+            <div class="choice-label">Recovery & pain relief</div>
+            <div class="choice-sub">Physio, rehab, joints</div>
+          </div>
+        </div>
+      </div>
+      <div class="step" id="step-2">
+        <h2>Default workout time?</h2>
+        <div class="choice-grid">
+          <div class="choice-card" onclick="selectChoice(this,'time','6am')"><div class="choice-icon">🌅</div><div class="choice-label">Early morning</div><div class="choice-sub">6:00 – 8:00 AM</div></div>
+          <div class="choice-card" onclick="selectChoice(this,'time','9am')"><div class="choice-icon">☀️</div><div class="choice-label">Mid morning</div><div class="choice-sub">8:00 – 10:00 AM</div></div>
+          <div class="choice-card" onclick="selectChoice(this,'time','lunch')"><div class="choice-icon">🌤️</div><div class="choice-label">Lunch break</div><div class="choice-sub">12:00 – 2:00 PM</div></div>
+          <div class="choice-card" onclick="selectChoice(this,'time','evening')"><div class="choice-icon">🌙</div><div class="choice-label">Evening</div><div class="choice-sub">6:00 – 9:00 PM</div></div>
+        </div>
+      </div>
+      <div class="step" id="step-3">
+        <h2>Session length?</h2>
+        <div class="choice-grid two-col">
+          <div class="choice-card" onclick="selectChoice(this,'duration','10')"><div class="choice-label">10 – 15 min</div><div class="choice-sub">Quick burst</div></div>
+          <div class="choice-card" onclick="selectChoice(this,'duration','20')"><div class="choice-label">20 – 30 min</div><div class="choice-sub">Daily habit</div></div>
+          <div class="choice-card" onclick="selectChoice(this,'duration','45')"><div class="choice-label">30 – 45 min</div><div class="choice-sub">Full session</div></div>
+          <div class="choice-card" onclick="selectChoice(this,'duration','60')"><div class="choice-label">45 – 60 min</div><div class="choice-sub">Deep work</div></div>
+        </div>
+      </div>
+      <div class="step" id="step-4">
+        <h2>Any health conditions I should know about?</h2>
+        <p class="step-sub">This helps me keep every session safe for your body. Be as detailed as you like.</p>
+        <textarea id="health-notes" placeholder="e.g. lower back pain, recovering from ACL surgery, nerve compression, bad knees, pregnancy — or leave blank if none"></textarea>
+      </div>
+      <div class="step" id="step-5">
+        <h2>Almost done!</h2>
+        <p class="step-sub">Review your profile before we start.</p>
+        <div id="profile-preview" class="profile-preview"></div>
+      </div>
+    </div>
+    <div class="onboarding-nav">
+      <button class="btn-ghost" id="ob-back" onclick="obBack()" style="visibility:hidden">Back</button>
+      <div class="step-dots">
+        <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <button class="btn-primary-sm" id="ob-next" onclick="obNext()">Next</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app-screen" class="screen">
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="sidebar-logo">
+          <div class="logo-mark small">F</div>
+          <span>FitPro</span>
+        </div>
+        <button class="sidebar-close" onclick="toggleSidebar()" aria-label="Close menu">✕</button>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar" id="sidebar-avatar">K</div>
+        <div>
+          <div class="user-name" id="sidebar-name">Loading...</div>
+          <div class="user-role" id="sidebar-role">Member</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="nav-item active" onclick="switchView('today')">
+          <span class="nav-icon">🏠</span> Today
+        </a>
+        <a class="nav-item" onclick="switchView('chat')">
+          <span class="nav-icon">💬</span> Chat with trainer
+        </a>
+        <a class="nav-item" onclick="switchView('session')">
+          <span class="nav-icon">🏃</span> My session
+        </a>
+        <a class="nav-item" onclick="switchView('checkin')">
+          <span class="nav-icon">❤️</span> Body check-in
+        </a>
+        <a class="nav-item" onclick="switchView('progress')">
+          <span class="nav-icon">📊</span> Progress
+        </a>
+        <a class="nav-item" onclick="switchView('compete')">
+          <span class="nav-icon">🏆</span> Compete
+        </a>
+        <a class="nav-item" onclick="switchView('resources')">
+          <span class="nav-icon">📚</span> Guides & videos
+        </a>
+        <a class="nav-item admin-only" id="admin-nav" onclick="switchView('admin')" style="display:none">
+          <span class="nav-icon">⚙️</span> Admin panel
+        </a>
+      </nav>
+      <div class="sidebar-bottom">
+        <a class="nav-item" onclick="switchView('profile')">
+          <span class="nav-icon">👤</span> My profile
+        </a>
+        <a class="nav-item" onclick="logoutUser()">
+          <span class="nav-icon">🚪</span> Sign out
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <div class="topbar">
+        <button class="menu-btn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+        <div class="topbar-title" id="topbar-title">Today</div>
+        <div class="topbar-date" id="topbar-date"></div>
+      </div>
+
+      <!-- TODAY VIEW -->
+      <div class="view active" id="view-today">
+        <div class="view-inner">
+          <div class="greeting-card">
+            <div class="greeting-text">
+              <div class="greeting-hi" id="greeting-hi">Good morning</div>
+              <div class="greeting-name" id="greeting-name">Loading...</div>
+            </div>
+            <div class="greeting-streak">
+              <div class="streak-num" id="streak-num">0</div>
+              <div class="streak-label">day streak</div>
+            </div>
+          </div>
+
+          <div class="safety-notice" id="safety-notice" style="display:none">
+            <span class="safety-icon">🛡️</span>
+            <span id="safety-text">Sessions adapted for your health conditions. Stop if you feel sharp pain.</span>
+          </div>
+
+          <div class="section-label">Today's schedule</div>
+          <div class="schedule-card">
+            <div class="schedule-slot primary">
+              <div class="slot-time" id="main-slot-time">6:00 AM</div>
+              <div class="slot-info">
+                <div class="slot-title" id="main-slot-title">Morning session</div>
+                <div class="slot-dur" id="main-slot-dur">20–30 min</div>
+              </div>
+              <div class="slot-status" id="main-slot-status">Upcoming</div>
+            </div>
+            <div class="schedule-slot secondary">
+              <div class="slot-time">Anytime</div>
+              <div class="slot-info">
+                <div class="slot-title">Desk-break stretch</div>
+                <div class="slot-dur">2–5 min</div>
+              </div>
+              <div class="slot-status">Quick</div>
+            </div>
+          </div>
+          <div class="action-row">
+            <button class="btn-primary" onclick="startSession()">Start session</button>
+            <button class="btn-outline" onclick="reschedule()">Can't make it</button>
+          </div>
+
+          <div class="section-label">Quick desk breaks</div>
+          <div class="quick-grid">
+            <div class="quick-card" onclick="quickChat('My upper back is stiff from sitting. Give me a 2-minute desk stretch right now.')">
+              <div class="quick-icon">🔙</div>
+              <div>Upper back stiff</div>
+            </div>
+            <div class="quick-card" onclick="quickChat('My neck is tight from the screen. Quick neck and shoulder stretch please.')">
+              <div class="quick-icon">🦒</div>
+              <div>Neck tight</div>
+            </div>
+            <div class="quick-card" onclick="quickChat('I feel tingling in my spine. What should I do right now? Keep it safe.')">
+              <div class="quick-icon">⚡</div>
+              <div>Spine tingling</div>
+            </div>
+            <div class="quick-card" onclick="quickChat('My knee is aching. What can I safely do at my desk right now?')">
+              <div class="quick-icon">🦵</div>
+              <div>Knee aching</div>
+            </div>
+          </div>
+
+          <div class="section-label">This week</div>
+          <div class="week-strip" id="week-strip"></div>
+        </div>
+      </div>
+
+      <!-- CHAT VIEW -->
+      <div class="view" id="view-chat">
+        <div class="chat-layout">
+          <div class="chat-messages" id="chat-messages">
+            <div class="chat-welcome">
+              <div class="chat-welcome-logo">F</div>
+              <div class="chat-welcome-text">Hi! I'm your FitPro trainer. Ask me anything — workouts, how your body feels today, what to do about that knee, or just tell me you only have 5 minutes.</div>
+            </div>
+          </div>
+          <div class="chat-input-area">
+            <div class="chat-suggestions" id="chat-suggestions">
+              <button onclick="sendSuggestion('Guide me through today\'s session step by step')">Guide today's session</button>
+              <button onclick="sendSuggestion('I only have 10 minutes today. What should I do?')">Only 10 minutes</button>
+              <button onclick="sendSuggestion('My back feels better but my knee is still aching')">Body update</button>
+              <button onclick="sendSuggestion('Suggest a free YouTube video for my back stretching')">Find me a video</button>
+            </div>
+            <div class="chat-input-row">
+              <textarea id="chat-input" placeholder="Ask your trainer anything..." rows="1" onkeydown="handleChatKey(event)" oninput="autoResize(this)"></textarea>
+              <button class="send-btn" onclick="sendChat()" aria-label="Send">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SESSION VIEW -->
+      <div class="view" id="view-session">
+        <div class="view-inner">
+          <div class="session-header">
+            <div class="section-label">Today's session</div>
+            <div class="session-meta" id="session-meta">Loading your plan...</div>
+          </div>
+          <div id="exercise-list" class="exercise-list"></div>
+          <div class="session-actions">
+            <button class="btn-primary" onclick="quickChat('Walk me through today\'s session exercise by exercise. Start with the first one.')">Guide me through it</button>
+            <button class="btn-outline" onclick="quickChat('Modify today\'s session — I only have 10 minutes and need the most important exercises.')">Only 10 min</button>
+            <button class="btn-outline" onclick="quickChat('Generate a completely new session plan for me today based on how I am feeling.')">Regenerate plan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHECK-IN VIEW -->
+      <div class="view" id="view-checkin">
+        <div class="view-inner">
+          <div class="section-label">How are you feeling today?</div>
+          <div class="feeling-row">
+            <button class="feel-btn" onclick="setFeeling(this,'great')" title="Great">😄<span>Great</span></button>
+            <button class="feel-btn" onclick="setFeeling(this,'good')" title="Good">🙂<span>Good</span></button>
+            <button class="feel-btn" onclick="setFeeling(this,'ok')" title="Okay">😐<span>Okay</span></button>
+            <button class="feel-btn" onclick="setFeeling(this,'tired')" title="Tired">😔<span>Tired</span></button>
+            <button class="feel-btn" onclick="setFeeling(this,'pain')" title="In pain">😣<span>In pain</span></button>
+          </div>
+
+          <div class="section-label">Body check</div>
+          <div class="body-grid" id="body-grid"></div>
+
+          <div class="section-label">Session completed?</div>
+          <div class="completed-row">
+            <button class="completed-btn" id="comp-yes" onclick="setCompleted(true)">✓ Yes, I did it</button>
+            <button class="completed-btn" id="comp-no" onclick="setCompleted(false)">✗ Not today</button>
+          </div>
+
+          <div class="section-label">Anything to add?</div>
+          <textarea id="checkin-notes" class="notes-input" placeholder="e.g. Back feels better today. Knee still aching after the session. Felt a tingle in my left leg..."></textarea>
+
+          <button class="btn-primary full-btn" onclick="submitCheckin()">Submit check-in</button>
+
+          <div class="section-label" style="margin-top:2rem">Recent check-ins</div>
+          <div id="recent-checkins" class="recent-checkins"></div>
+        </div>
+      </div>
+
+      <!-- PROGRESS VIEW -->
+      <div class="view" id="view-progress">
+        <div class="view-inner">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-val" id="stat-streak">0</div>
+              <div class="stat-label">Current streak</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-val" id="stat-total">0</div>
+              <div class="stat-label">Total sessions</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-val" id="stat-week">0/7</div>
+              <div class="stat-label">This week</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-val" id="stat-best">0</div>
+              <div class="stat-label">Best streak</div>
+            </div>
+          </div>
+          <div class="section-label">Body trends</div>
+          <div id="body-trends" class="body-trends"></div>
+          <div class="section-label">Session history</div>
+          <div id="session-history" class="session-history"></div>
+          <button class="btn-outline full-btn" onclick="quickChat('Analyse my recent check-ins and progress. Tell me what patterns you see and what I should focus on.')">Get AI insights</button>
+        </div>
+      </div>
+
+      <!-- COMPETE VIEW -->
+      <div class="view" id="view-compete">
+        <div class="view-inner">
+          <div class="compete-header">
+            <div class="trophy-icon">🏆</div>
+            <h2>Family leaderboard</h2>
+            <p>Friendly competition to keep each other moving</p>
+          </div>
+          <div id="leaderboard" class="leaderboard"></div>
+          <div class="section-label">This week's challenge</div>
+          <div class="challenge-card">
+            <div class="challenge-title">Complete 5 sessions this week</div>
+            <div class="challenge-sub">Resets every Monday</div>
+            <div id="challenge-progress" class="challenge-bar-wrap">
+              <div class="challenge-bar"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESOURCES VIEW -->
+      <div class="view" id="view-resources">
+        <div class="view-inner">
+          <div class="section-label">Curated for you</div>
+          <div id="resources-list" class="resources-list">
+            <div class="loading-resources">Loading personalized resources...</div>
+          </div>
+          <button class="btn-outline full-btn" onclick="loadResources()">Refresh recommendations</button>
+          <div class="section-label">Find specific content</div>
+          <div class="quick-grid">
+            <div class="quick-card" onclick="quickChat('Find me free YouTube videos for spinal nerve compression exercises')">Spine videos</div>
+            <div class="quick-card" onclick="quickChat('Find me ACL recovery phase 2 exercises on YouTube for free')">ACL recovery</div>
+            <div class="quick-card" onclick="quickChat('Best free yoga channels for beginners with back pain')">Yoga channels</div>
+            <div class="quick-card" onclick="quickChat('Free guided breathing and meditation for pain relief')">Pain relief</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE VIEW -->
+      <div class="view" id="view-profile">
+        <div class="view-inner">
+          <div class="profile-hero">
+            <div class="profile-avatar" id="profile-avatar">K</div>
+            <div class="profile-name" id="profile-name-display">Loading...</div>
+            <div class="profile-email" id="profile-email-display"></div>
+          </div>
+          <div class="section-label">Health profile</div>
+          <div class="profile-card" id="profile-card"></div>
+          <button class="btn-outline full-btn" onclick="editProfile()">Edit profile</button>
+          <div class="section-label" style="margin-top:1.5rem">Preferences</div>
+          <div class="pref-row">
+            <span>Default workout time</span>
+            <span id="pref-time" class="pref-val">—</span>
+          </div>
+          <div class="pref-row">
+            <span>Session length</span>
+            <span id="pref-dur" class="pref-val">—</span>
+          </div>
+          <div class="pref-row">
+            <span>Primary goal</span>
+            <span id="pref-goal" class="pref-val">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN VIEW -->
+      <div class="view" id="view-admin">
+        <div class="view-inner">
+          <div class="admin-header">
+            <div class="admin-badge">Admin</div>
+            <h2>Admin panel</h2>
+          </div>
+          <div class="section-label">All users</div>
+          <div id="admin-users" class="admin-users"></div>
+          <div class="section-label">App settings</div>
+          <div class="settings-card">
+            <div class="setting-row">
+              <div>
+                <div class="setting-label">App unlock password</div>
+                <div class="setting-sub">Required to open FitPro</div>
+              </div>
+              <button class="btn-sm" onclick="changeAppPassword()">Change</button>
+            </div>
+            <div class="setting-row">
+              <div>
+                <div class="setting-label">Claude API key</div>
+                <div class="setting-sub">Stored securely in Supabase Edge Function</div>
+              </div>
+              <span class="setting-status">Secure ✓</span>
+            </div>
+            <div class="setting-row">
+              <div>
+                <div class="setting-label">Supabase connection</div>
+                <div class="setting-sub" id="supabase-status">Checking...</div>
+              </div>
+              <span class="setting-status" id="supabase-indicator">...</span>
+            </div>
+          </div>
+          <div class="section-label">Danger zone</div>
+          <div class="danger-card">
+            <div class="setting-row">
+              <div>
+                <div class="setting-label">Clear all app data</div>
+                <div class="setting-sub">Wipes local storage. Does not delete Supabase data.</div>
+              </div>
+              <button class="btn-sm danger" onclick="clearLocalData()">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div id="loading-overlay" class="loading-overlay" style="display:none">
+  <div class="spinner"></div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<script src="js/config.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/data.js"></script>
+</body>
+</html>
