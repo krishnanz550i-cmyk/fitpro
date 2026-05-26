@@ -11,7 +11,7 @@ function initSupabase() {
 }
 
 // Initialize on load
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
   try { initSupabase(); } catch(e) { console.error('Supabase init failed:', e); }
 });
 
