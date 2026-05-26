@@ -442,83 +442,36 @@ function renderExerciseCards(exercises) {
   return wrap;
 }
 
-// ─── In-memory cache for this session (avoids duplicate DB reads) ───
-const _svgCache = {};
-
-// ─── Generate a new SVG via Edge Function (same path as chat, has the API key) ───
-async function generateExerciseSVG(exerciseName) {
-  const prompt = `Generate an inline SVG stick figure illustration for the exercise: "${exerciseName}".
-
-Rules:
-- viewBox="0 0 80 80", no width/height attributes
-- Use stroke="currentColor" for the figure (so it inherits CSS color)
-- Use stroke="#444" for floor/wall/props
-- Use stroke="#4a9a4a" with stroke-dasharray="3,2" for motion arrows
-- stroke-width: 2.5 for body, 2 for limbs, 1.5 for props
-- Show the correct body POSITION for this exercise (lying, seated, kneeling, standing, on all fours etc)
-- Add at least one arrow or arc showing the direction of movement
-- No text, no labels, no fill on the figure
-- Include a floor line if the person is lying/kneeling: <line x1="4" y1="68" x2="76" y2="68" stroke="#333" stroke-width="1.5"/>
-- Return ONLY the raw <svg>...</svg> block, nothing else.`;
-
-  try {
-    const response = await fetch(CONFIG.EDGE_FUNCTION_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system: 'You are an SVG illustrator. Return only raw SVG code, nothing else. No markdown, no explanation.',
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    if (!response.ok) throw new Error('Edge function error');
-    const data = await response.json();
-    const text = data.content?.[0]?.text || data.text || '';
-    const match = text.match(/<svg[\s\S]*<\/svg>/i);
-    if (match) {
-      const svg = match[0];
-      _svgCache[exerciseName.toLowerCase().trim()] = svg;
-      saveIllustration(exerciseName, svg); // fire-and-forget, saves for all users
-      return svg;
-    }
-  } catch (e) {
-    // Silently fall back — never break the UI
-  }
-  return EXERCISE_SVG.default;
+// ─── Build a Google Images search URL for any exercise ───
+function googleImagesURL(exerciseName) {
+  const query = encodeURIComponent(exerciseName + ' exercise how to');
+  return `https://www.google.com/search?q=${query}&tbm=isch`;
 }
 
-// ─── Full lookup chain: memory → Supabase → generate ───
-async function getExerciseSVGAsync(exerciseName) {
-  const n = (exerciseName || '').toLowerCase().trim();
+// ─── Render exercise objects → visual card DOM ───
+function renderExerciseCards(exercises) {
+  if (!exercises || exercises.length === 0) return null;
+  const wrap = document.createElement('div');
+  wrap.className = 'ex-card-list';
 
-  // 1. Keyword match — instant, zero cost
-  if (/breath|diaphragm|spinal breath/.test(n))        return EXERCISE_SVG.breathing;
-  if (/shoulder roll/.test(n))                          return EXERCISE_SVG['shoulder-rolls'];
-  if (/neck roll|cervical/.test(n))                     return EXERCISE_SVG['neck-rolls'];
-  if (/side stretch|lateral/.test(n))                   return EXERCISE_SVG['side-stretch'];
-  if (/cat|cow/.test(n))                                return EXERCISE_SVG['cat-cow'];
-  if (/knee.?to.?chest|supine knee/.test(n))            return EXERCISE_SVG['knee-to-chest'];
-  if (/spinal twist|supine twist|rotation/.test(n))     return EXERCISE_SVG['spinal-twist'];
-  if (/thoracic/.test(n))                               return EXERCISE_SVG['thoracic-rotation'];
-  if (/chest.?open|doorframe|pec/.test(n))              return EXERCISE_SVG['chest-opener'];
-  if (/legs.?up|wall.?hamstring/.test(n))               return EXERCISE_SVG['legs-up-wall'];
-  if (/child|childs/.test(n))                           return EXERCISE_SVG['childs-pose'];
-  if (/ankle pump|ankle circle/.test(n))                return EXERCISE_SVG['ankle-pumps'];
-  if (/bridge|glute/.test(n))                           return EXERCISE_SVG.bridge;
-  if (/plank/.test(n))                                  return EXERCISE_SVG.plank;
-  if (/hip.?flex|lunge/.test(n))                        return EXERCISE_SVG['hip-flexor'];
-  if (/squat/.test(n))                                  return EXERCISE_SVG.squat;
-  if (/seated|sit|desk|chair/.test(n))                  return EXERCISE_SVG.seated;
+  exercises.forEach((ex, i) => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    const searchURL = googleImagesURL(ex.name);
+    card.innerHTML = `
+      <div class="ex-card-num">${i + 1}</div>
+      <div class="ex-card-art" aria-hidden="true">${getExerciseSVG(ex.name)}</div>
+      <div class="ex-card-body">
+        <div class="ex-card-title">
+          ${escapeHtml(ex.name)}
+          <a class="ex-img-link" href="${searchURL}" target="_blank" rel="noopener" title="See photos">📷</a>
+        </div>
+        ${ex.details.length ? `<div class="ex-card-detail">${escapeHtml(ex.details.slice(0, 2).join(' · '))}</div>` : ''}
+        ${ex.note ? `<div class="ex-card-note">⚠ ${escapeHtml(ex.note)}</div>` : ''}
+      </div>
+    `;
+    wrap.appendChild(card);
+  });
 
-  // 2. In-memory session cache — already generated this session
-  if (_svgCache[n]) return _svgCache[n];
-
-  // 3. Shared Supabase table — generated by any user before
-  const cached = await getIllustration(n);
-  if (cached) {
-    _svgCache[n] = cached; // store in memory so next call in session is instant
-    return cached;
-  }
-
-  // 4. Nothing found anywhere — generate fresh via Claude API and save for everyone
-  return await generateExerciseSVG(exerciseName);
+  return wrap;
 }
