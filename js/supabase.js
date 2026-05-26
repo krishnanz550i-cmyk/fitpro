@@ -101,3 +101,31 @@ async function getRecentChatHistory(userId, limit = 10) {
   if (!data) return [];
   return data.reverse();
 }
+
+// ─── Exercise illustration shared cache ───
+async function getIllustration(exerciseName) {
+  try {
+    const sb = initSupabase();
+    const { data, error } = await sb
+      .from('exercise_illustrations')
+      .select('svg')
+      .eq('exercise_name', exerciseName.toLowerCase().trim())
+      .single();
+    if (error || !data) return null;
+    return data.svg;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function saveIllustration(exerciseName, svg) {
+  try {
+    const sb = initSupabase();
+    await sb.from('exercise_illustrations').insert({
+      exercise_name: exerciseName.toLowerCase().trim(),
+      svg
+    });
+  } catch (e) {
+    // Silently ignore — duplicate key or network error, not critical
+  }
+}
