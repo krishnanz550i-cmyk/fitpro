@@ -1,22 +1,19 @@
-// ─── Supabase Client ───
-// Uses the Supabase CDN via script tag loaded dynamically
+// ─── Supabase Client (initialized immediately) ───
 let supabase = null;
 
-async function initSupabase() {
+function initSupabase() {
   if (supabase) return supabase;
-  await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
+  if (!window.supabase) {
+    throw new Error('Supabase library not loaded');
+  }
   supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
   return supabase;
 }
 
-function loadScript(src) {
-  return new Promise((res, rej) => {
-    if (document.querySelector(`script[src="${src}"]`)) return res();
-    const s = document.createElement('script');
-    s.src = src; s.onload = res; s.onerror = rej;
-    document.head.appendChild(s);
-  });
-}
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => {
+  try { initSupabase(); } catch(e) { console.error('Supabase init failed:', e); }
+});
 
 // ─── Database Schema Setup ───
 // Run this once in your Supabase SQL editor:
