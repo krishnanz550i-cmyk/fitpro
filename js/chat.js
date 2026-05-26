@@ -70,6 +70,7 @@ async function callClaude(messages, systemOverride = null, attempt = 1) {
     const data = await response.json();
     return data.content?.[0]?.text || data.text || '';
   } catch (e) {
+    console.error(`callClaude attempt ${attempt} failed:`, e.message, e);
     if (attempt < MAX_ATTEMPTS) {
       return callClaude(messages, systemOverride, attempt + 1);
     }
