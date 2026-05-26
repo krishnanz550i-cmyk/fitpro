@@ -445,7 +445,7 @@ function renderExerciseCards(exercises) {
 // ─── In-memory cache for this session (avoids duplicate DB reads) ───
 const _svgCache = {};
 
-// ─── Generate a new SVG via Claude API, save to shared Supabase table ───
+// ─── Generate a new SVG via Edge Function (same path as chat, has the API key) ───
 async function generateExerciseSVG(exerciseName) {
   const prompt = `Generate an inline SVG stick figure illustration for the exercise: "${exerciseName}".
 
@@ -462,23 +462,22 @@ Rules:
 - Return ONLY the raw <svg>...</svg> block, nothing else.`;
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const response = await fetch(CONFIG.EDGE_FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }]
+        system: 'You are an SVG illustrator. Return only raw SVG code, nothing else. No markdown, no explanation.',
+        messages: [{ role: 'user', content: prompt }]
       })
     });
+    if (!response.ok) throw new Error('Edge function error');
     const data = await response.json();
-    const text = data.content?.[0]?.text || '';
+    const text = data.content?.[0]?.text || data.text || '';
     const match = text.match(/<svg[\s\S]*<\/svg>/i);
     if (match) {
       const svg = match[0];
-      // Save to session cache and shared Supabase table
       _svgCache[exerciseName.toLowerCase().trim()] = svg;
-      saveIllustration(exerciseName, svg); // fire-and-forget, non-blocking
+      saveIllustration(exerciseName, svg); // fire-and-forget, saves for all users
       return svg;
     }
   } catch (e) {
