@@ -5,28 +5,39 @@ let isStreaming = false;
 // ─── System prompt — trimmed for token efficiency ───
 function buildSystemPrompt(profile) {
   const conds = profile?.health_notes?.trim();
-  // Only include condition-specific rules if the user actually has conditions
-  const safetyBlock = conds ? `
-SAFETY (always follow):
-- Adapt all exercises for: ${conds}
-- Spinal/nerve: no heavy loading, no unsupported folds, stop if tingling ↑
-- ACL/knee: no flexion >90°, no jumping/pivoting
-- Back pain: thoracic mobility, chest openers, postural work
-- Stop cues: sharp pain, neurological symptoms → stop immediately
-- Never diagnose; refer to physio/doctor for medical questions.` : `
-SAFETY: Always include stop-if-pain reminders. Never diagnose.`;
+  const safetyBlock = conds ? `SAFETY: Adapt all exercises for: ${conds}. Spinal/nerve: no heavy loading, stop if tingling increases. ACL/knee: no flexion >90°, no jumping. Back: thoracic mobility focus. Always say stop if sharp pain. Never diagnose.` : `SAFETY: Always include stop-if-pain reminders. Never diagnose.`;
 
-  return `You are FitPro, a concise personal trainer. Warm, safety-first, no jargon.
-Profile: ${profile?.name || 'User'} | Goal: ${profile?.goal || 'general fitness'} | Session: ${profile?.duration || '20'} min | Time pref: ${profile?.default_time || 'morning'}
+  return `You are FitPro, a personal trainer. Concise, warm, safety-first.
+Profile: ${profile?.name || 'User'} | Goal: ${profile?.goal || 'general fitness'} | Session: ${profile?.duration || '20'} min
 ${safetyBlock}
 
-RESPONSE FORMAT:
-- For exercise lists: use numbered format exactly like this:
-  1. Exercise Name
-     Sets/reps/duration · position
-     ⚠ safety note (only if needed)
-- For chat/questions: short prose, max 3 paragraphs
-- Never use markdown headers (#). Keep it tight.`;
+CRITICAL FORMAT RULES — you MUST follow these exactly, no exceptions:
+1. NEVER use # headers or ## headers. Never.
+2. NEVER use **bold** or *italic* markdown.
+3. NEVER use --- separators.
+4. When giving ANY exercise list or workout session, use ONLY this exact format:
+
+1. Exercise Name
+   detail: sets/reps/duration and position
+   ⚠ safety note if needed
+
+2. Exercise Name
+   detail: sets/reps/duration and position
+
+...and so on. Nothing else. No setup sections. No "The Movement" blocks. No "Timer starts now". Just the numbered list with a one-line detail and optional ⚠ note.
+
+5. For questions or conversation (not exercise lists): plain short prose only, max 3 sentences per paragraph.`;
+}
+
+// ─── Strip any leftover markdown from AI responses ───
+function stripMarkdown(text) {
+  return text
+    .replace(/^#{1,3}\s+/gm, '')       // remove # ## ###
+    .replace(/\*{1,3}([^*]+)\*{1,3}/g, '$1')  // remove **bold** *italic*
+    .replace(/^---+$/gm, '')            // remove --- separators
+    .replace(/^\s*[-–]\s+/gm, '• ')    // normalise bullet dashes
+    .replace(/\n{3,}/g, '\n\n')       // collapse excess blank lines
+    .trim();
 }
 
 // ─── Main Claude API call via Supabase Edge Function ───
@@ -47,9 +58,13 @@ async function callClaude(messages, systemOverride = null) {
 
 // ─── Detect if a response contains an exercise list ───
 function isExerciseResponse(text) {
-  // Must have at least 2 numbered items that look like exercises
-  const matches = text.match(/^\d+[.)]\s+\S/mg);
-  return matches && matches.length >= 2;
+  // Numbered list: "1. Exercise"
+  const numbered = text.match(/^\d+[.)]\s+\S/mg);
+  if (numbered && numbered.length >= 2) return true;
+  // Also catch ## Exercise style (Claude ignoring format rules)
+  const headers = text.match(/^#{1,3}\s+\*{0,2}Exercise/mgi);
+  if (headers && headers.length >= 1) return true;
+  return false;
 }
 
 // ─── Send a message ───
@@ -67,7 +82,8 @@ async function sendMessage(text, fromUser = true) {
   try {
     // Token efficiency: keep last 8 messages (4 exchanges) not 12
     const contextHistory = chatHistory.slice(-9, -1);
-    const reply = await callClaude(contextHistory.concat([{ role: 'user', content: text }]));
+    const rawReply = await callClaude(contextHistory.concat([{ role: 'user', content: text }]));
+    const reply = stripMarkdown(rawReply);
 
     removeTyping(typingId);
 
