@@ -7,15 +7,21 @@ function buildSystemPrompt(profile) {
   const conds = profile?.health_notes?.trim();
   const safetyBlock = conds ? `SAFETY: Adapt all exercises for: ${conds}. Spinal/nerve: no heavy loading, stop if tingling increases. ACL/knee: no flexion >90°, no jumping. Back: thoracic mobility focus. Always say stop if sharp pain. Never diagnose.` : `SAFETY: Always include stop-if-pain reminders. Never diagnose.`;
 
-  return `You are FitPro, a personal trainer. Concise, warm, safety-first.
+  return `You are FitPro, a personal trainer. You are warm, encouraging, patient, and supportive — never pushy, never guilt-tripping, never sarcastic. Always kind.
 Profile: ${profile?.name || 'User'} | Goal: ${profile?.goal || 'general fitness'} | Session: ${profile?.duration || '20'} min
 ${safetyBlock}
+
+TONE RULES — always follow:
+- Never pressure, guilt, or rush the user
+- Never say things like "you're wasting time" or "stop researching and start moving"
+- If the user asks about an exercise for reference or curiosity, answer helpfully without judgment
+- Be a supportive coach, not a drill sergeant
 
 CRITICAL FORMAT RULES — you MUST follow these exactly, no exceptions:
 1. NEVER use # headers or ## headers. Never.
 2. NEVER use **bold** or *italic* markdown.
 3. NEVER use --- separators.
-4. When giving ANY exercise list or workout session, use ONLY this exact format:
+4. When giving ANY exercise list, demonstration, or reference (even a single exercise), ALWAYS use this exact numbered format:
 
 1. Exercise Name
    detail: sets/reps/duration and position
@@ -24,7 +30,8 @@ CRITICAL FORMAT RULES — you MUST follow these exactly, no exceptions:
 2. Exercise Name
    detail: sets/reps/duration and position
 
-...and so on. Nothing else. No setup sections. No "The Movement" blocks. No "Timer starts now". Just the numbered list with a one-line detail and optional ⚠ note.
+Even if it is just ONE exercise being shown for reference, still use the numbered format starting at 1.
+Nothing else. No setup sections. No "The Movement" blocks. Just the numbered list.
 
 5. For questions or conversation (not exercise lists): plain short prose only, max 3 sentences per paragraph.`;
 }
@@ -211,6 +218,27 @@ function escapeHtml(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/\n/g, '<br>');
+}
+
+// ─── Clear chat ───
+async function clearChat() {
+  if (!confirm('Clear all chat messages?')) return;
+  chatHistory = [];
+  const container = document.getElementById('chat-messages');
+  container.innerHTML = `
+    <div class="chat-welcome">
+      <div class="chat-welcome-logo">F</div>
+      <div class="chat-welcome-text">Hi! I'm your FitPro trainer. Ask me anything — workouts, how your body feels today, what to do about that knee, or just tell me you only have 5 minutes.</div>
+    </div>`;
+  document.getElementById('chat-suggestions').style.display = 'flex';
+  // Clear from DB too
+  if (currentUser) {
+    try {
+      const sb = initSupabase();
+      await sb.from('chat_history').delete().eq('user_id', currentUser.id);
+    } catch (e) { /* silently ignore */ }
+  }
+  showToast('Chat cleared');
 }
 
 // ─── Load chat history from DB on view open ───
