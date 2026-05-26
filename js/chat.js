@@ -48,10 +48,16 @@ function stripMarkdown(text) {
 }
 
 // ─── Main Claude API call via Supabase Edge Function ───
-// Retries once automatically on failure (handles cold start / shutdown)
+// Retries up to 3 times with increasing delay — handles cold start / shutdown
 async function callClaude(messages, systemOverride = null, attempt = 1) {
   const system = systemOverride || buildSystemPrompt(currentProfile);
+  const MAX_ATTEMPTS = 3;
+  const DELAYS = [0, 4000, 6000]; // ms to wait before each attempt
+
   try {
+    if (DELAYS[attempt - 1]) {
+      await new Promise(r => setTimeout(r, DELAYS[attempt - 1]));
+    }
     const response = await fetch(CONFIG.EDGE_FUNCTION_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -64,10 +70,8 @@ async function callClaude(messages, systemOverride = null, attempt = 1) {
     const data = await response.json();
     return data.content?.[0]?.text || data.text || '';
   } catch (e) {
-    // Auto-retry once after 2s — handles Edge Function cold start / shutdown
-    if (attempt === 1) {
-      await new Promise(r => setTimeout(r, 2000));
-      return callClaude(messages, systemOverride, 2);
+    if (attempt < MAX_ATTEMPTS) {
+      return callClaude(messages, systemOverride, attempt + 1);
     }
     throw e;
   }
