@@ -237,10 +237,11 @@ async function renderSession() {
   list.innerHTML = exercises.map((ex, i) => `
     <div class="exercise-item">
       <div class="ex-num">${i + 1}</div>
+      <div class="ex-art" aria-hidden="true">${getExerciseSVG(ex.name)}</div>
       <div class="ex-body">
         <div class="ex-title">${ex.name}</div>
         <div class="ex-detail">${ex.detail}</div>
-        ${ex.note ? `<div class="ex-note">${ex.note}</div>` : ''}
+        ${ex.note ? `<div class="ex-note">⚠ ${ex.note}</div>` : ''}
       </div>
     </div>
   `).join('');
