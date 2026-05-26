@@ -78,6 +78,8 @@ async function launchApp() {
   initTopbar();
   renderSidebar();
   await switchView('today');
+  // Pre-warm Edge Function in background so first chat message is instant
+  if (window.warmupEdgeFunction) setTimeout(window.warmupEdgeFunction, 1000);
   if (currentProfile?.is_admin) {
     document.getElementById('admin-nav').style.display = 'flex';
   }
@@ -237,11 +239,10 @@ async function renderSession() {
   list.innerHTML = exercises.map((ex, i) => `
     <div class="exercise-item">
       <div class="ex-num">${i + 1}</div>
-      <div class="ex-art" aria-hidden="true">${getExerciseSVG(ex.name)}</div>
       <div class="ex-body">
         <div class="ex-title">${ex.name}</div>
         <div class="ex-detail">${ex.detail}</div>
-        ${ex.note ? `<div class="ex-note">⚠ ${ex.note}</div>` : ''}
+        ${ex.note ? `<div class="ex-note">${ex.note}</div>` : ''}
       </div>
     </div>
   `).join('');
