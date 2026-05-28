@@ -341,7 +341,7 @@ function warmupEdgeFunction() {
 }
 
 // Also warmup when the app first loads
-window.addEventListener('fitpro-ready', warmupEdgeFunction);
+//window.addEventListener('fitpro-ready', warmupEdgeFunction);
 
 // Expose for use in switchView
-window.warmupEdgeFunction = warmupEdgeFunction;
+//window.warmupEdgeFunction = warmupEdgeFunction;
